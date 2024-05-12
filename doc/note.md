@@ -4,6 +4,16 @@ https://www.youtube.com/watch?v=4j7MkMc0sN0&list=PLtB7CL7EG7pCw7Xy1SQC53Gl8pI7aD
 
 @ques zig 怎么处理内存的
 
+## 2024-05-12 15:02:28
+
+```zig
+// @ques d_ptr.len为什么会报错
+ var array = [_]u8{ 1, 2, 3, 4, 5 };
+    var d_ptr: [*]u8 = &array;
+    d_ptr[1] += 1;
+    print("d_ptr: {*}, array:{any}, len:{any} \n", .{ d_ptr, @TypeOf(d_ptr), d_ptr.len });
+```
+
 ## 2024-05-12 11:35:59
 
 ```zig
@@ -44,7 +54,7 @@ pub fn main() !void {
 
 ## 2024-05-07 11:17:25
 
-zig sentinel terminated arrays 有啥用？
+- @ques zig sentinel terminated arrays 有啥用？
 
 ```zig
 这里的`.a`是什么意思
