@@ -1,20 +1,21 @@
 const std = @import("std");
 const print = std.debug.print;
 
-pub fn main() void {
-    var x: u32 = 10;
-    {
-        defer print("{d}\n", .{x});
-        defer x += 2;
-    }
-    print("{d}\n", .{x});
+pub fn main() !void {
+    const a: u8 = 1;
+    const b: *const u8 = &a;
+    const c = &b;
+    print("value: {any}\n", .{c});
 }
+// pub fn main() !void {
+//     const a: u8 = 1;
+//     const b: ?*const u8 = &a;
+//     print("value: {any}\n", .{b});
 
-fn addFive(x: u32) u32 {
-    return x + 5;
-}
-
-fn fic(n: u32) u32 {
-    if (n == 0 or n == 1) return 1;
-    return fic(n - 1) + fic(n - 2);
-}
+//     if (b) |*c| {
+//         print("value: {}, refer: {}\n", .{ c, c.* });
+//     }
+//     if (b) |c| {
+//         print("value: {}, refer: {}\n", .{ c, c.* });
+//     }
+// }
