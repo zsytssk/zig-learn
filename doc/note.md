@@ -1,8 +1,24 @@
 https://zig.guide/language-basics/errors
 
-https://www.youtube.com/watch?v=4j7MkMc0sN0&list=PLtB7CL7EG7pCw7Xy1SQC53Gl8pI7aDg9t&index=9
+https://www.youtube.com/watch?v=tFeB-LD7rks&list=PLtB7CL7EG7pCw7Xy1SQC53Gl8pI7aDg9t&index=10
 
 @ques zig 怎么处理内存的
+
+## 2024-05-13 13:34:20
+
+- @ques slice 和 array 的区别
+
+- `[5]u8` `*[5]u8` 和 `[]const u8` 的区别
+- `A sentinel terminate slice` 是什么
+
+- @ques `*item` 为什么可以使用在`&array`上
+
+```zig
+var array = [_]u8{ 0, 1, 2, 3, 4, 5 };
+for (&array) |*item| {
+    item.* += 1;
+}
+```
 
 ## 2024-05-12 15:02:28
 
