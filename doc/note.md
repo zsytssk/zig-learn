@@ -1,8 +1,18 @@
 https://zig.guide/language-basics/errors
 
-https://www.youtube.com/watch?v=tFeB-LD7rks&list=PLtB7CL7EG7pCw7Xy1SQC53Gl8pI7aDg9t&index=10
+https://www.youtube.com/watch?v=7D__mR1nA2c&list=PLtB7CL7EG7pCw7Xy1SQC53Gl8pI7aDg9t&index=17
 
 @ques zig 怎么处理内存的
+
+## 2024-05-15 11:37:33
+
+- @ques `u8` 如何转换成 character
+
+`const hello = "Hello, World!";` hello 的类型 `*const [13:0]u8`
+
+## 2024-05-14 16:11:12
+
+- @ques noreturn 和 void 的区别
 
 ## 2024-05-13 13:34:20
 
