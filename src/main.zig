@@ -1,10 +1,13 @@
 const std = @import("std");
-const Point = @import("point.zig");
 
 pub fn main() !void {
-    var p1 = Point.new(10, 10);
-    const p2 = Point.new(12, 12);
+    std.debug.print("name:{any}\n", .{@typeInfo(@TypeOf(test1)) == .Fn});
+    const args = std.meta.ArgsTuple(@TypeOf(test1));
+    inline for (std.meta.fields(args)) |field| {
+        std.debug.print("name:{s} | type:{any}\n", .{ field.name, field.type });
+    }
+}
 
-    std.debug.print("{d:.2}\n", .{p1.distance(p2)});
-    std.debug.print("{}\n", .{@TypeOf(Point)});
+fn test1(x: u8) u8 {
+    return x;
 }

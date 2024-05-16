@@ -1,10 +1,14 @@
 https://zig.guide/language-basics/errors
 
-https://www.youtube.com/watch?v=7D__mR1nA2c&list=PLtB7CL7EG7pCw7Xy1SQC53Gl8pI7aDg9t&index=17
+https://www.youtube.com/watch?v=4wbvjNR_Q78&list=PLtB7CL7EG7pCw7Xy1SQC53Gl8pI7aDg9t&index=20
 
 @ques zig 怎么处理内存的
 
 ## 2024-05-15 11:37:33
+
+- @ques `inline for ...` inline 是什么意思
+
+  - comptime + inline for 可以让这段代码在编译的时候运行？
 
 - @ques `u8` 如何转换成 character
 

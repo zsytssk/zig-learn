@@ -1,13 +1,28 @@
-x: f32,
-y: f32,
+pub fn Point(comptime T: type) type {
+    return struct {
+        x: T,
+        y: T,
 
-const Point = @This();
+        const Self = @This();
 
-pub fn new(x: f32, y: f32) Point {
-    return .{ .x = x, .y = y };
-}
-pub fn distance(self: Point, other: Point) f32 {
-    const distx = other.x - self.x;
-    const disty = other.y - self.y;
-    return @sqrt(distx * distx + disty * disty);
+        pub fn new(x: T, y: T) Self {
+            return .{ .x = x, .y = y };
+        }
+        pub fn distance(self: Self, other: Self) f64 {
+            // const distx = other.x - self.x;
+            // const disty = other.y - self.y;
+            const diffx: f64 = switch (@typeInfo(T)) {
+                .Int => @floatFromInt(other.x - self.x),
+                .Float => other.x - self.x,
+                else => @compileError("Only int and float are supported"),
+            };
+            const diffy: f64 = switch (@typeInfo(T)) {
+                .Int => @floatFromInt(other.y - self.y),
+                .Float => other.y - self.y,
+                else => @compileError("Only int and float are supported"),
+            };
+
+            return @sqrt(diffx * diffx + diffy * diffy);
+        }
+    };
 }
