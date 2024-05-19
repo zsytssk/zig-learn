@@ -1,8 +1,16 @@
 https://zig.guide/language-basics/errors
 
-https://www.youtube.com/watch?v=4wbvjNR_Q78&list=PLtB7CL7EG7pCw7Xy1SQC53Gl8pI7aDg9t&index=20
+https://www.youtube.com/watch?v=rxo0j08ctdQ&list=PLtB7CL7EG7pCw7Xy1SQC53Gl8pI7aDg9t&index=24
+https://codeberg.org/dude_the_builder/zig_in_depth
 
-@ques zig 怎么处理内存的
+## 2024-05-19 15:08:43
+
+- @ques zig 如何实现多态 == 基类 + 子类扩展
+
+## 2024-05-18 16:10:04
+
+- @ques zig 怎么处理内存的
+  - 比如循环引用
 
 ## 2024-05-15 11:37:33
 
