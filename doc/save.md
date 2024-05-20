@@ -1,2 +1,3 @@
 - @ques zig sentinel terminated arrays 有啥用？
 - `[*]u8` 和 `*[?]u8` 区别，为什么第二个可以访问`.len` 第一个却不行
+- @ques zig slice 能 push 吗

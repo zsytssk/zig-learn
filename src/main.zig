@@ -1,87 +1,69 @@
 const std = @import("std");
 
 pub fn main() !void {
-    // Prints to stderr (it's a shortcut based on `std.io.getStdErr()`)
-    std.debug.print("All your {s} are belong to us.\n\n", .{"codebase"});
+    // Define a tuple typed constant.
+    const tuple_a: struct { u8, bool } = .{ 42, true };
+    std.debug.print("tuple_a: {any}, {}\n", .{ tuple_a, @TypeOf(tuple_a) });
 
-    // stdout is for the actual output of your application, for example if you
-    // are implementing gzip, then only the compressed bytes should be sent to
-    // stdout, not any debugging messages.
-    const stdout_file = std.io.getStdOut().writer();
-    var bw = std.io.bufferedWriter(stdout_file);
-    const stdout = bw.writer();
+    // You can index tuples.
+    std.debug.print("tuple_a[0]: {}\n", .{tuple_a[0]});
+    // They have a len field too.
+    std.debug.print("tuple_a.len: {}\n", .{tuple_a.len});
 
-    try stdout.print("Run `zig build test` to run the tests.\n\n", .{});
+    // You can access fields with @"".
+    std.debug.print("tuple_a.@\"0\": {}\n", .{tuple_a.@"0"});
+    // Side note: @"" can be used anywhere an identifier can.
+    // It allows otherwise illegal identifiers.
+    const @"123" = 123;
+    _ = @"123";
+    const @"while" = "a keyword!";
+    _ = @"while";
 
-    // All printing functions take a comptime format string that can
-    // contain placeholders for arguments to print. These placeholders
-    // are called format specifiers and have the form:
-    // `{[argument][specifier]:[fill][alignment][width].[precision]}`
-    const float: f64 = 3.1415;
-    try stdout.print("float: `{}` `{0d}`, `{0d:0<10.2}` `{0d:0^10.2}` `{0d:0>10.2}`  \n\n", .{float});
+    // You can concatenate tuples with other tuples...
+    const tuple_b: struct { f16, i32 } = .{ 3.14, -42 };
+    const tuple_c = tuple_a ++ tuple_b;
+    std.debug.print("tuple_c: {any}\n", .{tuple_c});
 
-    // Integers can formatted as decimal, binary, hex, octal, ASCII, or Unicode.
-    const int: u8 = 42;
-    try stdout.print("int decimal: {} \n", .{int});
-    try stdout.print("int binary: {b} \n", .{int});
-    try stdout.print("int octal: {o} \n", .{int});
-    try stdout.print("int hex: {x} \n", .{int});
-    try stdout.print("int ASCII: {c} \n", .{int}); // max 8 bits
-    try stdout.print("int Unicode: {u} \n\n", .{int}); // max 21 bits
+    // If all fields are of the same type, you can concatenate
+    // tuples with arrays too.
+    const array: [3]u8 = .{ 1, 2, 3 }; // Note tuple coerced to array.
+    const tuple_d = .{ 4, 5, 6 };
+    const result = array ++ tuple_d;
+    std.debug.print("result: {any}, {}\n", .{ result, @TypeOf(result) });
 
-    // Works for anything that can be sliced.
-    const string = "Hello, world!";
-    try stdout.print("string: `{s}` `{0s:_^20}` \n\n", .{string});
+    // You can iterate tuples with inline for.
+    inline for (tuple_c, 0..) |value, i| {
+        std.debug.print("{}: {}, ", .{ i, value });
+    }
+    std.debug.print("\n", .{});
 
-    const optional: ?u8 = 42;
-    try stdout.print("optional: `{?}` `{?}` \n", .{ optional, @as(?u8, null) });
-    // You can further format after the ?.
-    try stdout.print("optional: `{?d:0>10}` \n\n", .{optional});
+    // You can index a pointer to a tuple like a pointer to an array.
+    const ptr = &tuple_c;
+    std.debug.print("ptr[0]: {}\n", .{ptr[0]});
+    std.debug.print("ptr.@\"0\": {}\n", .{ptr.@"0"});
 
-    const error_union: anyerror!u8 = error.WrongNumber;
-    try stdout.print("error union: `{!}` `{!}` \n", .{ error_union, @as(anyerror!u8, 13) });
-    // You can further format after the !.
-    try stdout.print("error union: `{!d:0>10}` \n\n", .{@as(anyerror!u8, 13)});
+    // ** repetition works on tuples too.
+    const tuple_e = tuple_a ** 2;
+    std.debug.print("tuple_e: {any}\n", .{tuple_e});
 
-    const ptr = &float;
-    try stdout.print("pointer: `{}` `{0*}` `{}` \n", .{ ptr, ptr.* });
+    // varargs in Zig functions can be done with tuples and comptime
+    // type reflection.
+    // varargsInZig(.{ 42, 3.14, false });
+    // const S = struct {
+    //     a: u8,
+    //     b: bool,
+    // };
+    // const s = S{ .a = 42, .b = true };
+    // varargsInZig(s);
+    varargsInZig(42);
+}
 
-    const S = struct {
-        a: bool = true,
-        b: f16 = 3.1415,
-    };
-    const s = S{};
-    try stdout.print("`s: {[a]}` `{[b]d:0>10.2}` \n\n", s);
-    // Instead of
-    try stdout.print("`s: {}` `{d:0>10.2}` \n\n", .{ s.a, s.b });
-
-    // When you need to format a string to use within your program, you
-    // can either print to a fixed buffer...
-    var buf: [256]u8 = undefined;
-    const str = try std.fmt.bufPrint(&buf, "`{[a]}` `{[b]d:0>10.2}` \n\n", s);
-    try stdout.print("str: {s}", .{str});
-
-    // ...or use an allocator.
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-    const allocator = gpa.allocator();
-
-    const str_alloc = try std.fmt.allocPrint(allocator, "`{[a]}` `{[b]d:0>10.2}` \n\n", s);
-    defer allocator.free(str_alloc);
-    try stdout.print("str_alloc: {s}", .{str_alloc});
-
-    // To print a literal { or } you have to repeat it.
-    try stdout.print("curly: {{s}} \n\n", .{});
-
-    try bw.flush(); // don't forget to flush!
-
-    // Same for debug and log output.
-    std.debug.print("debug.print: {} \n\n", .{float});
-    std.log.debug("{}", .{float});
-    std.log.info("{}", .{float});
-    std.log.warn("{}", .{float});
-    std.log.err("{} \n", .{float});
-
-    // `any` can print anything; great for debugging.
-    std.debug.print("any: `{any}` `{any}` `{any}` \n", .{ s, string, float });
+fn varargsInZig(x: anytype) void {
+    // Get type info.
+    const info = @typeInfo(@TypeOf(x));
+    // Check if it's a tuple.
+    if (info != .Struct) @panic("Not a tuple!");
+    if (!info.Struct.is_tuple) @panic("Not a tuple!");
+    // Do stuff...
+    inline for (x) |field| std.debug.print("{}\n", .{field});
 }
