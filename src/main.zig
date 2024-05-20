@@ -1,19 +1,87 @@
 const std = @import("std");
 
-const List = @import("list.zig").List;
-
 pub fn main() !void {
-    // Our good old GPA.
+    // Prints to stderr (it's a shortcut based on `std.io.getStdErr()`)
+    std.debug.print("All your {s} are belong to us.\n\n", .{"codebase"});
+
+    // stdout is for the actual output of your application, for example if you
+    // are implementing gzip, then only the compressed bytes should be sent to
+    // stdout, not any debugging messages.
+    const stdout_file = std.io.getStdOut().writer();
+    var bw = std.io.bufferedWriter(stdout_file);
+    const stdout = bw.writer();
+
+    try stdout.print("Run `zig build test` to run the tests.\n\n", .{});
+
+    // All printing functions take a comptime format string that can
+    // contain placeholders for arguments to print. These placeholders
+    // are called format specifiers and have the form:
+    // `{[argument][specifier]:[fill][alignment][width].[precision]}`
+    const float: f64 = 3.1415;
+    try stdout.print("float: `{}` `{0d}`, `{0d:0<10.2}` `{0d:0^10.2}` `{0d:0>10.2}`  \n\n", .{float});
+
+    // Integers can formatted as decimal, binary, hex, octal, ASCII, or Unicode.
+    const int: u8 = 42;
+    try stdout.print("int decimal: {} \n", .{int});
+    try stdout.print("int binary: {b} \n", .{int});
+    try stdout.print("int octal: {o} \n", .{int});
+    try stdout.print("int hex: {x} \n", .{int});
+    try stdout.print("int ASCII: {c} \n", .{int}); // max 8 bits
+    try stdout.print("int Unicode: {u} \n\n", .{int}); // max 21 bits
+
+    // Works for anything that can be sliced.
+    const string = "Hello, world!";
+    try stdout.print("string: `{s}` `{0s:_^20}` \n\n", .{string});
+
+    const optional: ?u8 = 42;
+    try stdout.print("optional: `{?}` `{?}` \n", .{ optional, @as(?u8, null) });
+    // You can further format after the ?.
+    try stdout.print("optional: `{?d:0>10}` \n\n", .{optional});
+
+    const error_union: anyerror!u8 = error.WrongNumber;
+    try stdout.print("error union: `{!}` `{!}` \n", .{ error_union, @as(anyerror!u8, 13) });
+    // You can further format after the !.
+    try stdout.print("error union: `{!d:0>10}` \n\n", .{@as(anyerror!u8, 13)});
+
+    const ptr = &float;
+    try stdout.print("pointer: `{}` `{0*}` `{}` \n", .{ ptr, ptr.* });
+
+    const S = struct {
+        a: bool = true,
+        b: f16 = 3.1415,
+    };
+    const s = S{};
+    try stdout.print("`s: {[a]}` `{[b]d:0>10.2}` \n\n", s);
+    // Instead of
+    try stdout.print("`s: {}` `{d:0>10.2}` \n\n", .{ s.a, s.b });
+
+    // When you need to format a string to use within your program, you
+    // can either print to a fixed buffer...
+    var buf: [256]u8 = undefined;
+    const str = try std.fmt.bufPrint(&buf, "`{[a]}` `{[b]d:0>10.2}` \n\n", s);
+    try stdout.print("str: {s}", .{str});
+
+    // ...or use an allocator.
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer std.debug.print("GPA result: {}\n", .{gpa.deinit()});
-    var logging_alloc = std.heap.loggingAllocator(gpa.allocator());
-    const allocator = logging_alloc.allocator();
+    defer _ = gpa.deinit();
+    const allocator = gpa.allocator();
 
-    var list = try List(u8).init(allocator, 42);
-    defer list.deinit();
-    try list.append(13);
-    try list.append(99);
+    const str_alloc = try std.fmt.allocPrint(allocator, "`{[a]}` `{[b]d:0>10.2}` \n\n", s);
+    defer allocator.free(str_alloc);
+    try stdout.print("str_alloc: {s}", .{str_alloc});
 
-    std.log.info("log.info {?}", .{list.lookup(13)});
-    std.debug.print("debug.print {?}\n", .{list.lookup(33)});
+    // To print a literal { or } you have to repeat it.
+    try stdout.print("curly: {{s}} \n\n", .{});
+
+    try bw.flush(); // don't forget to flush!
+
+    // Same for debug and log output.
+    std.debug.print("debug.print: {} \n\n", .{float});
+    std.log.debug("{}", .{float});
+    std.log.info("{}", .{float});
+    std.log.warn("{}", .{float});
+    std.log.err("{} \n", .{float});
+
+    // `any` can print anything; great for debugging.
+    std.debug.print("any: `{any}` `{any}` `{any}` \n", .{ s, string, float });
 }
