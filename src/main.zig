@@ -1,69 +1,82 @@
 const std = @import("std");
 
 pub fn main() !void {
-    // Define a tuple typed constant.
-    const tuple_a: struct { u8, bool } = .{ 42, true };
-    std.debug.print("tuple_a: {any}, {}\n", .{ tuple_a, @TypeOf(tuple_a) });
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
 
-    // You can index tuples.
-    std.debug.print("tuple_a[0]: {}\n", .{tuple_a[0]});
-    // They have a len field too.
-    std.debug.print("tuple_a.len: {}\n", .{tuple_a.len});
+    // Crate a new empty list; length == 0, capacity == 0.
+    var list = std.ArrayList(u8).init(gpa.allocator());
+    defer list.deinit();
 
-    // You can access fields with @"".
-    std.debug.print("tuple_a.@\"0\": {}\n", .{tuple_a.@"0"});
-    // Side note: @"" can be used anywhere an identifier can.
-    // It allows otherwise illegal identifiers.
-    const @"123" = 123;
-    _ = @"123";
-    const @"while" = "a keyword!";
-    _ = @"while";
+    // Add some items with append.
+    for ("Hello, World!") |byte| try list.append(byte);
+    printList(list);
 
-    // You can concatenate tuples with other tuples...
-    const tuple_b: struct { f16, i32 } = .{ 3.14, -42 };
-    const tuple_c = tuple_a ++ tuple_b;
-    std.debug.print("tuple_c: {any}\n", .{tuple_c});
+    // Use it like a stack.
+    try list.append('\n'); // push
+    printList(list);
+    _ = list.pop();
+    printList(list);
 
-    // If all fields are of the same type, you can concatenate
-    // tuples with arrays too.
-    const array: [3]u8 = .{ 1, 2, 3 }; // Note tuple coerced to array.
-    const tuple_d = .{ 4, 5, 6 };
-    const result = array ++ tuple_d;
-    std.debug.print("result: {any}, {}\n", .{ result, @TypeOf(result) });
+    // Use it like a writer if it's an u8 list.
+    const writer = list.writer();
+    _ = try writer.print(" Writing to an ArrayLIst: {}", .{42});
+    printList(list);
 
-    // You can iterate tuples with inline for.
-    inline for (tuple_c, 0..) |value, i| {
-        std.debug.print("{}: {}, ", .{ i, value });
-    }
-    std.debug.print("\n", .{});
+    // Use it like an iterator.
+    while (list.popOrNull()) |byte| std.debug.print("{c} ", .{byte});
+    std.debug.print("\n\n", .{});
+    printList(list);
 
-    // You can index a pointer to a tuple like a pointer to an array.
-    const ptr = &tuple_c;
-    std.debug.print("ptr[0]: {}\n", .{ptr[0]});
-    std.debug.print("ptr.@\"0\": {}\n", .{ptr.@"0"});
+    // Append a slice.
+    try list.appendSlice("Hello, World!");
+    printList(list);
 
-    // ** repetition works on tuples too.
-    const tuple_e = tuple_a ** 2;
-    std.debug.print("tuple_e: {any}\n", .{tuple_e});
+    // Ordered remove. Returns removed item.
+    // Shifts items over. O(N)
+    _ = list.orderedRemove(5);
+    printList(list);
 
-    // varargs in Zig functions can be done with tuples and comptime
-    // type reflection.
-    // varargsInZig(.{ 42, 3.14, false });
-    // const S = struct {
-    //     a: u8,
-    //     b: bool,
-    // };
-    // const s = S{ .a = 42, .b = true };
-    // varargsInZig(s);
-    varargsInZig(42);
+    // Swap remove. Moves last item into new slot. O(1)
+    _ = list.swapRemove(5);
+    printList(list);
+
+    // ArrayList is just a handy wrapper of functionality
+    // around a slice of items. You can still work with the
+    // slice directly.
+    list.items[5] = ' ';
+    printList(list);
+
+    // You can clear the list and obtain the items as an
+    // owned slice which you must free.
+    const slice = try list.toOwnedSlice();
+    defer gpa.allocator().free(slice);
+    printList(list);
+
+    // You can create a list and allocate the required capacity
+    // all at once.
+    list = try std.ArrayList(u8).initCapacity(gpa.allocator(), 12);
+    // You can then append assuming you have the capacity,
+    // which cannot fail.
+    for ("Hello") |byte| list.appendAssumeCapacity(byte);
+    std.debug.print("len: {}, cap: {}\n", .{ list.items.len, list.capacity });
+    printList(list);
+
+    // Example functions using an ArrayList internally.
+    const bytes = try gatherBytes(gpa.allocator(), "Hey there!");
+    defer gpa.allocator().free(bytes);
+    std.debug.print("bytes: {s}\n", .{bytes});
 }
 
-fn varargsInZig(x: anytype) void {
-    // Get type info.
-    const info = @typeInfo(@TypeOf(x));
-    // Check if it's a tuple.
-    if (info != .Struct) @panic("Not a tuple!");
-    if (!info.Struct.is_tuple) @panic("Not a tuple!");
-    // Do stuff...
-    inline for (x) |field| std.debug.print("{}\n", .{field});
+fn printList(list: std.ArrayList(u8)) void {
+    std.debug.print("list: ", .{});
+    for (list.items) |item| std.debug.print("{c} ", .{item});
+    std.debug.print("\n\n", .{});
+}
+
+fn gatherBytes(allocator: std.mem.Allocator, slice: []const u8) ![]u8 {
+    var list = try std.ArrayList(u8).initCapacity(allocator, slice.len);
+    defer list.deinit();
+    for (slice) |byte| list.appendAssumeCapacity(byte);
+    return try list.toOwnedSlice();
 }
