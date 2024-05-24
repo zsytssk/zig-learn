@@ -1,6 +1,6 @@
 https://zig.guide/language-basics/errors
 
-https://www.youtube.com/watch?v=sVVriGMcraM&list=PLtB7CL7EG7pCw7Xy1SQC53Gl8pI7aDg9t&index=35
+https://www.youtube.com/watch?v=76_VHwQ6MyM&list=PLtB7CL7EG7pCw7Xy1SQC53Gl8pI7aDg9t&index=46
 https://codeberg.org/dude_the_builder/zig_in_depth
 
 ## 2024-05-19 15:08:43
