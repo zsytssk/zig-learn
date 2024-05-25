@@ -16,19 +16,10 @@
     // internet connectivity.
     .dependencies = .{
         // See `zig fetch --save <url>` for a command-line interface for adding dependencies.
-        .ziglyph = .{
-            .url = "https://codeberg.org/dude_the_builder/ziglyph/archive/main.tar.gz",
-            .hash = "12207831bce7d4abce57b5a98e8f3635811cfefd160bca022eb91fe905d36a02cf25",
-            // When this is provided, the package is found in a directory relative to the
-            // build root. In this case the package's hash is irrelevant and therefore not
-            // computed. This field and `url` are mutually exclusive.
-            // .path = "ziglyph",
-
-            // When this is set to `true`, a package is declared to be lazily
-            // fetched. This makes the dependency only get fetched if it is
-            // actually used.
-            .lazy = false,
-        },
+        // .clap = .{
+        //     .url = "https://github.com/Hejsil/zig-clap/archive/refs/tags/0.8.0.tar.gz",
+        //     .hash = "1220949d4e88864579067b6d4cdad6476c6176f27e782782c2c39b7f2c4817a10efb",
+        // },
     },
 
     // Specifies the set of files and directories that are included in this package.

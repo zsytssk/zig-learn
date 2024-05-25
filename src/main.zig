@@ -1,64 +1,117 @@
 const std = @import("std");
-const Atomic = std.atomic.Atomic;
-const time = std.time;
-const Thread = std.Thread;
 
-// Just an example; you don't have to do this because
-// std.Thread.WaitGroup already exists!
-const WaitGroup = struct {
-    members: Atomic(usize),
+const Method = enum {
+    get,
+    post,
+    put,
 
-    fn init() WaitGroup {
-        return .{ .members = Atomic(usize).init(0) };
-    }
-
-    // New member joins the group.
-    fn add(self: *WaitGroup) void {
-        // Loads are usually .Acquire.
-        _ = self.members.fetchAdd(1, .Acquire);
-    }
-
-    // Existing member leaves the group.
-    fn done(self: *WaitGroup) void {
-        // Stores are usually .Release.
-        _ = self.members.fetchSub(1, .Release);
-    }
-
-    // Wait for all members to leave.
-    fn wait(self: WaitGroup) void {
-        // Use .Monotonic when ordering isn't that crucial.
-        while (self.members.load(.Monotonic) > 0) time.sleep(500 * time.ns_per_ms);
+    // To print a struct with the default format specifier,
+    // you must define this `format` method within it.
+    // Typically, you only need to use the `writer` parameter,
+    // aside from the struct instance itself.
+    pub fn format(
+        self: Method,
+        comptime _: []const u8,
+        _: std.fmt.FormatOptions,
+        writer: anytype,
+    ) !void {
+        switch (self) {
+            .get => try writer.writeAll("GET"),
+            .post => try writer.writeAll("POST"),
+            .put => try writer.writeAll("PUT"),
+        }
     }
 };
 
-// A sample worker thread.
-fn worker(id: usize, wg: *WaitGroup) void {
-    // Signal we're leaving the wait group on exit.
-    defer wg.done();
+const Encoding = enum {
+    brotli,
+    deflate,
+    gzip,
 
-    std.debug.print("{} started\n", .{id});
-    time.sleep(1 * time.ns_per_ms);
-    std.debug.print("{} finished\n", .{id});
-}
+    pub fn format(
+        self: Encoding,
+        comptime _: []const u8,
+        _: std.fmt.FormatOptions,
+        writer: anytype,
+    ) !void {
+        switch (self) {
+            .brotli => try writer.writeAll("br"),
+            // inline else will fill in the rest of the options.
+            // @tagName returns the string version of the enum tag.
+            inline else => |enc| try writer.writeAll(@tagName(enc)),
+        }
+    }
+};
+
+const Version = enum {
+    // Here we use the @"" syntax that allows
+    // for characters that would normally be invalid
+    // in an identifier.
+    @"1.0",
+    @"1.1",
+    @"2",
+    @"3",
+
+    pub fn format(
+        self: Version,
+        comptime _: []const u8,
+        _: std.fmt.FormatOptions,
+        writer: anytype,
+    ) !void {
+        switch (self) {
+            inline else => |ver| try writer.writeAll("HTTP/" ++ @tagName(ver)),
+        }
+    }
+};
+
+const Request = struct {
+    accept: []const Encoding = &.{
+        .deflate,
+        .gzip,
+        .brotli,
+    },
+    body: []const u8 = "Hello, World!\n",
+    method: Method = .get,
+    path: []const u8 = "/",
+    version: Version = .@"1.1",
+
+    pub fn format(
+        self: Request,
+        comptime _: []const u8,
+        _: std.fmt.FormatOptions,
+        writer: anytype,
+    ) !void {
+        // Multi-line strings can come in handy when preparing
+        // complex format strings.
+        const fmt_str_1 =
+            \\{} {s} {}
+            \\Accept-Encoding:
+        ;
+        _ = try writer.print(fmt_str_1, .{ self.method, self.path, self.version });
+
+        // To print out a comma separated list, we loop over
+        // the items of the accept slice.
+        for (self.accept, 0..) |enc, i| {
+            if (i != 0) try writer.writeAll(", ");
+            _ = try writer.print("{}", .{enc});
+        }
+
+        const fmt_str_2 =
+            \\
+            \\
+            \\{s}
+        ;
+        _ = try writer.print(fmt_str_2, .{self.body});
+    }
+};
 
 pub fn main() !void {
-    // Create the wait group.
-    var wg = WaitGroup.init();
-    // Ensure we wait for all members of the
-    // wait group to leave before exiting main.
-    defer wg.wait();
+    var req = Request{};
+    std.debug.print("{}\n", .{req});
 
-    for (0..5) |i| {
-        // Add a member to the wait group.
-        wg.add();
-        // Spawn the thread.
-        const thread = Thread.spawn(.{}, worker, .{ i, &wg }) catch |err| {
-            // Remove from wait group on error
-            // so wg.wait() doesn't wait forever.
-            wg.done();
-            return err;
-        };
-        // No need to join, we'll wait via the wait group.
-        thread.detach();
-    }
+    req.method = .put;
+    req.path = "/about.html";
+    req.accept = &.{.gzip};
+    req.body = "Bye!";
+    std.debug.print("{}\n", .{req});
 }
