@@ -1,6 +1,8 @@
 https://zig.guide/language-basics/errors
 
-https://codeberg.org/dude_the_builder/zig_in_depth
+https://www.youtube.com/watch?v=fzoQZQPqwSI&list=PLtB7CL7EG7pDKdSBA_AlNYrEsISOHBOQL&index=3
+
+## 2024-05-27 10:45:32
 
 ## 2024-05-25 11:13:32
 
