@@ -1,8 +1,15 @@
 https://zig.guide/language-basics/errors
 
-https://www.youtube.com/watch?v=fzoQZQPqwSI&list=PLtB7CL7EG7pDKdSBA_AlNYrEsISOHBOQL&index=3
+https://www.youtube.com/watch?v=wHx781zRKAQ&list=PLtB7CL7EG7pDKdSBA_AlNYrEsISOHBOQL&index=6
 
 ## 2024-05-27 10:45:32
+
+```
+tail -f /proc/<pid>/fd/1
+1 = stdout, 2 = stderr
+```
+
+`tail -f /proc/32218/fd/1`
 
 ## 2024-05-25 11:13:32
 
