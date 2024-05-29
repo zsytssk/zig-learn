@@ -1,6 +1,6 @@
 https://zig.guide/language-basics/errors
 
-https://www.youtube.com/watch?v=BJpfuMZkHxY&list=PLtB7CL7EG7pDKdSBA_AlNYrEsISOHBOQL&index=9
+https://www.youtube.com/watch?v=OqCTJw2BAvw&list=PLtB7CL7EG7pDKdSBA_AlNYrEsISOHBOQL&index=10
 
 ## 2024-05-27 10:45:32
 

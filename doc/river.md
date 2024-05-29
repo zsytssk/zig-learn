@@ -8,6 +8,8 @@
 
 - @ques 其他的布局管理
 
+- @ques run wayland in a window.
+
 - @ques river 有没有交流群
 
   - github discord stack?

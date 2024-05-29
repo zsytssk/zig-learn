@@ -1,24 +1,34 @@
 const std = @import("std");
+const flags = @import("flag.zig");
+const fmt = std.fmt;
 
 pub fn main() !void {
-    const array1 = [_]u8{ 1, 2, 3 };
-    const array2: [3]u8 = .{ 1, 2, 3 };
-
-    var array3: [3]u8 = undefined;
-    // array3[0] = 1;
-    // array3[1] = 2;
-    // array3[2] = 3;
-
-    array3[0], array3[1], array3[2] = .{ 1, 2, 3 };
-
-    std.debug.print("{any} {any} {any}\n", .{ @TypeOf(array1), array2, array3 });
-    std.debug.print("array1.len: {d}\n", .{array1.len});
-
-    const grid3x3 = [_][3]u8{
-        .{ 1, 2, 3 },
-        .{ 4, 5, 6 },
-        .{ 7, 8, 9 },
+    const arg = [_][*:0]const u8{ "-h", "-version", "-view-padding", "10", "-outer-padding", "100" };
+    const result = flags.parser([*:0]const u8, &[_]flags.Flag{
+        .{ .name = "h", .kind = .boolean },
+        .{ .name = "version", .kind = .boolean },
+        .{ .name = "view-padding", .kind = .arg },
+        .{ .name = "outer-padding", .kind = .arg },
+        .{ .name = "main-location", .kind = .arg },
+        .{ .name = "main-count", .kind = .arg },
+        .{ .name = "main-ratio", .kind = .arg },
+    }).parse(arg[0..]) catch {
+        std.debug.print("dfsdf", .{});
+        return;
     };
 
-    std.debug.print("grid3x3: {any}\n", .{grid3x3});
+    if (result.flags.@"view-padding") |raw| {
+        const view_padding = fmt.parseUnsigned(u31, raw, 10) catch {
+            return;
+        };
+        std.debug.print("view_padding: {any} \n", .{view_padding});
+    }
+    if (result.flags.@"outer-padding") |raw| {
+        const outer_padding = fmt.parseUnsigned(u31, raw, 10) catch {
+            return;
+        };
+        std.debug.print("outer_padding: {any} \n", .{outer_padding});
+    }
+
+    std.debug.print("version: {any}", .{result.flags.version});
 }
