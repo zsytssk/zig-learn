@@ -17,6 +17,8 @@ pub fn main() !void {
         return;
     };
 
+    std.debug.print("{any}", .{result.flags});
+
     if (result.flags.@"view-padding") |raw| {
         const view_padding = fmt.parseUnsigned(u31, raw, 10) catch {
             return;
