@@ -13,3 +13,35 @@ zig 如何让 struct 支持 `==` `!=`
 ## 编译 c 文件
 
 https://www.reddit.com/r/Zig/comments/1cjtcc9/zig_013_fail_to_build_c_file/
+
+## 2024-05-30 10:45:31
+
+- `@typeInfo` 类型的细节信息
+
+```
+const fields = @typeInfo(Point).Struct.fields;
+
+  inline for (fields) |field| {
+      std.debug.print("{s}:{any}\n", .{ field.name, field.type });
+  }
+```
+
+- `@TypeOf` 获得某个值的类型
+
+- `@typeName` 类型信息转换成字符串
+- `@Type` 是 `@typeInfo` 的反函数, 可以用 build.type 构建类型
+
+- `inline for(list)` list 的类型必须是 comptime-known
+
+- `@field(result_flags, flag.name)` -> 通过字符串修改 struct 属性
+
+## comptime
+
+```zig
+const a: []const u8 = comptime flags_type: {
+    var a: []const u8 = &.{ 1, 2, 3 };
+    a = a ++ .{ 4, 5, 6 };
+    break :flags_type a;
+};
+std.debug.print("{any}", .{a});
+```

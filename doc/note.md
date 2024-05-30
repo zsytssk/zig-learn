@@ -1,31 +1,47 @@
 https://zig.guide/language-basics/errors
 
-https://www.youtube.com/watch?v=OqCTJw2BAvw&list=PLtB7CL7EG7pDKdSBA_AlNYrEsISOHBOQL&index=10
+https://www.youtube.com/watch?v=fJ1nqFzl3bE&list=PLtB7CL7EG7pDKdSBA_AlNYrEsISOHBOQL&index=12
 
 ## 2024-05-27 10:45:32
 
+https://sr.ht/~novakane/rivercarro/
+
+```sh
+# Mod+H and Mod+L to decrease/increase the main ratio of rivercarro
+riverctl map normal $mod H send-layout-cmd rivercarro "main-ratio -0.05"
+riverctl map normal $mod L send-layout-cmd rivercarro "main-ratio +0.05"
+
+# Mod+Shift+H and Mod+Shift+L to increment/decrement the main count of rivercarro
+riverctl map normal $mod+Shift H send-layout-cmd rivercarro "main-count +1"
+riverctl map normal $mod+Shift L send-layout-cmd rivercarro "main-count -1"
+
+# Mod+{Up,Right,Down,Left} to change layout orientation
+riverctl map normal $mod Up    send-layout-cmd rivercarro "main-location top"
+riverctl map normal $mod Right send-layout-cmd rivercarro "main-location right"
+riverctl map normal $mod Down  send-layout-cmd rivercarro "main-location bottom"
+riverctl map normal $mod Left  send-layout-cmd rivercarro "main-location left"
+# And for monocle
+riverctl map normal $mod M     send-layout-cmd rivercarro "main-location monocle"
+# Cycle through layout
+riverctl map normal $mod W     send-layout-cmd rivercarro "main-location-cycle left,monocle"
+```
+
 ### 记忆
 
-- `@typeInfo` 类型的细节信息
-
-```
-const fields = @typeInfo(Point).Struct.fields;
-
-  inline for (fields) |field| {
-      std.debug.print("{s}:{any}\n", .{ field.name, field.type });
-  }
-```
-
-- `@TypeOf` 获得某个值的类型
-
-- `@typeName` 类型信息转换成字符串
-- `@Type` 是 `@typeInfo` 的反函数, 可以用 build.type 构建类型
-
-- `inline for(list)` list 的类型必须是 comptime-known
-
-- `@field(result_flags, flag.name)` -> 通过字符串修改 struct 属性
-
 ### task
+
+- @ques opaque 是什么
+- @ques @ptrCast 是什么
+- @ques `union(enum)`
+- @ques `mem.tokenize(u8, mem.span(ev.command), " ");`
+
+- @ques `wayland` 的调用都是 c 代码吗?
+
+### end
+
+- @ques zig comptime 能用在什么地方?
+
+- @ques zig 怎么修改 string
 
 `[*:0]const u8` diff `[:0]const u8` -> `*` 是指针的意思吗?
 
