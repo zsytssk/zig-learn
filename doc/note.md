@@ -6,38 +6,27 @@ https://www.youtube.com/watch?v=fJ1nqFzl3bE&list=PLtB7CL7EG7pDKdSBA_AlNYrEsISOHB
 
 https://sr.ht/~novakane/rivercarro/
 
-```sh
-# Mod+H and Mod+L to decrease/increase the main ratio of rivercarro
-riverctl map normal $mod H send-layout-cmd rivercarro "main-ratio -0.05"
-riverctl map normal $mod L send-layout-cmd rivercarro "main-ratio +0.05"
-
-# Mod+Shift+H and Mod+Shift+L to increment/decrement the main count of rivercarro
-riverctl map normal $mod+Shift H send-layout-cmd rivercarro "main-count +1"
-riverctl map normal $mod+Shift L send-layout-cmd rivercarro "main-count -1"
-
-# Mod+{Up,Right,Down,Left} to change layout orientation
-riverctl map normal $mod Up    send-layout-cmd rivercarro "main-location top"
-riverctl map normal $mod Right send-layout-cmd rivercarro "main-location right"
-riverctl map normal $mod Down  send-layout-cmd rivercarro "main-location bottom"
-riverctl map normal $mod Left  send-layout-cmd rivercarro "main-location left"
-# And for monocle
-riverctl map normal $mod M     send-layout-cmd rivercarro "main-location monocle"
-# Cycle through layout
-riverctl map normal $mod W     send-layout-cmd rivercarro "main-location-cycle left,monocle"
-```
-
 ### 记忆
 
 ### task
 
-- @ques opaque 是什么
-- @ques @ptrCast 是什么
-- @ques `union(enum)`
+- @todo 对比 rivercarro 看改了哪些内容
+
 - @ques `mem.tokenize(u8, mem.span(ev.command), " ");`
+  - `mem.tokenize` 分割字符串
+  - `mem.span` 将 c 字符串转换成 slice(有 len)
+
+### end
 
 - @ques `wayland` 的调用都是 c 代码吗?
 
-### end
+  - 怎么和 wayland 交互
+
+- @ques `union(enum)`
+
+  - union enum union(enum)
+
+- @ques @ptrCast 是什么
 
 - @ques zig comptime 能用在什么地方?
 

@@ -1,13 +1,9 @@
 const std = @import("std");
 
-const Window = opaque {
-    fn test1() void {
-        std.debug.print("hello world", .{});
-    }
-};
-const Button = opaque {};
+pub fn main() void {
+    const text: [*:0]const u8 = "Hello, world!";
 
-pub fn main() !void {
-    const main_window = Window;
-    main_window.test1();
+    const span = std.mem.span(text);
+    std.debug.print("Span: {any}\n", .{text.len});
+    std.debug.print("Span: {any}\n", .{span.len});
 }

@@ -24,3 +24,4 @@ zig build -Doptimize=ReleaseSafe -Dxwayland --prefix ~/.local install
 
 - @ques 能不能看到 river 的 log
 - @ques river 能不能运行在一个测试的窗口中
+- @ques 怎么和 wayland 交互

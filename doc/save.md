@@ -45,3 +45,14 @@ const a: []const u8 = comptime flags_type: {
 };
 std.debug.print("{any}", .{a});
 ```
+
+## opaque
+
+https://zig.guide/language-basics/opaque/
+
+opaque 是用来做不在 zig 中的对象等做申明类型的, 就像 ts 文件给和他交互的 js 文件写的类型一样
+
+## std.mem
+
+- `mem.tokenize` 分割字符串
+- `mem.span` 将 c 字符串转换成 slice(有 len)
