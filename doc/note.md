@@ -2,21 +2,61 @@ https://zig.guide/language-basics/errors
 
 https://www.youtube.com/watch?v=fJ1nqFzl3bE&list=PLtB7CL7EG7pDKdSBA_AlNYrEsISOHBOQL&index=12
 
+- 实拍越南山城大叻 -> 疗养
+
 ## 2024-05-27 10:45:32
 
-https://sr.ht/~novakane/rivercarro/
+- @todo 对比 rivercarro 看改了哪些内容
+- 看看 river 的其他模块 -> riverctl
 
 ### 记忆
 
 ### task
 
-- @todo 对比 rivercarro 看改了哪些内容
+- @ques vscode shortcut previous edit location
 
-- @ques `mem.tokenize(u8, mem.span(ev.command), " ");`
-  - `mem.tokenize` 分割字符串
-  - `mem.span` 将 c 字符串转换成 slice(有 len)
+- @ques zig array
+
+  - std.SinglyLinkedList -> `.prepend` `.first` `.remove`
+  - std.TailQueue
+
+- @ques `@intCast`
+
+- @ques std.log.scoped
+
+- @ques `mem.splitSequence` `std.AutoHashMapUnmanaged` `mem.orderZ`
+
+- @ques `main-location-cycle` 之后页面的布局怎么就改变了
+
+  - cfgs 修改之后 又触发了其他的函数运行?
+
+- @ques 所有的外部接口
+
+  - `wl.Output`
+  - `layout.`
+  - `wl.Registry` `wl.Registry.Event`
+  - `river.LayoutV3.setListener`
+  - wl.Display
+  - river.LayoutManagerV3 | `river.LayoutV3` | `river.LayoutV3.Event`
+
+- @ques `river.LayoutV3` 应该是 river 内部实现的接口
+
+- @ques options
+
+  - main-location -> 主区域的位置
+  - main-count -> 主区域的窗口数量?
+  - main-ratio -> 主区域占整个窗口的大小
+
+- @ques layout_demand 设置后计算布局
+  - 怎么就能计算每一个窗口的位置和大小呢? 没有看到窗口 id 什么之类的
+  - 是 ev.serial 吗
 
 ### end
+
+- @ques `mem.tokenize(u8, mem.span(ev.command), " ");`
+
+  - `mem.tokenize` 分割字符串
+  - `mem.span` 将 c 字符串转换成 slice(有 len)
 
 - @ques `wayland` 的调用都是 c 代码吗?
 

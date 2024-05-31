@@ -1,3 +1,5 @@
+感觉这代码好复杂
+
 ## url
 
 https://codeberg.org/river/river/src/branch/master/protocol/river-layout-v3.xml
@@ -6,6 +8,8 @@ https://codeberg.org/river/wiki/src/branch/master/pages/Community-Layouts.md
 https://github.com/zsytssk/river/blob/master/PACKAGING.md
 
 https://github.com/zsytssk/river?tab=readme-ov-file
+
+rivercarro https://sr.ht/~novakane/rivercarro/
 
 ## other
 
