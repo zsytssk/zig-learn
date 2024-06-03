@@ -26,13 +26,13 @@ https://www.youtube.com/watch?v=whjDH-LKA2s
 
 - @ques `std.AutoHashMapUnmanaged`
 
-- std.SinglyLinkedList -> `.prepend` `.first` `.remove`
+- list
+  - std.SinglyLinkedList -> `.prepend` `.first` `.remove`
+  - std.TailQueue
 
 ### task
 
-- @ques zig array
-
-  - std.TailQueue
+- `const bytes align(@alignOf(u32)) = [_]u8{ 0x12, 0x12, 0x12, 0x12 };`
 
 - @ques `main-location-cycle` 之后页面的布局怎么就改变了
 

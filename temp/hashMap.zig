@@ -15,6 +15,8 @@ pub fn main() !void {
     try map.put(allocator, 2, 20);
     try map.put(allocator, 3, 30);
 
+    try map.put(allocator, 1, 12);
+
     // Lookup values
     _ = try map.getOrPutValue(allocator, 4, 100);
     _ = try map.getOrPut(allocator, 5);
@@ -26,9 +28,7 @@ pub fn main() !void {
         std.debug.print("Key 1 not found\n", .{});
     }
 
-    std.debug.print("map.count {}\n", .{map.count()});
-    // Remove a key-value pair
-    _ = map.remove(2);
+    std.debug.print("map.size {}, capacity {}\n", .{ map.size, map.capacity() });
     std.debug.print("map.count {}\n", .{map.count()});
 
     // Iterate over the key-value pairs
