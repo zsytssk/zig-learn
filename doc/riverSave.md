@@ -29,3 +29,26 @@ zig build -Doptimize=ReleaseSafe -Dxwayland --prefix ~/.local install
 - @ques 能不能看到 river 的 log
 - @ques river 能不能运行在一个测试的窗口中
 - @ques 怎么和 wayland 交互
+
+## rivertile
+
+- 所有的外部接口
+
+  - `wl.Output`
+  - `layout.`
+  - `wl.Registry` `wl.Registry.Event`
+  - `river.LayoutV3.setListener`
+  - wl.Display
+  - river.LayoutManagerV3 | `river.LayoutV3` | `river.LayoutV3.Event`
+
+- @ques `river.LayoutV3` 应该是 river 内部实现的接口
+
+- options
+
+  - main-location -> 主区域的位置
+  - main-count -> 主区域的窗口数量?
+  - main-ratio -> 主区域占整个窗口的大小
+
+- @ques layout_demand 设置后计算布局
+  - 怎么就能计算每一个窗口的位置和大小呢? 没有看到窗口 id 什么之类的
+  - 是 ev.serial 吗
