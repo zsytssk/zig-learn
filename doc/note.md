@@ -1,6 +1,6 @@
 https://zig.guide/language-basics/errors
 
-https://www.youtube.com/watch?v=fJ1nqFzl3bE&list=PLtB7CL7EG7pDKdSBA_AlNYrEsISOHBOQL&index=12
+https://www.youtube.com/watch?v=whjDH-LKA2s
 
 - 实拍越南山城大叻 -> 疗养
 
@@ -9,22 +9,29 @@ https://www.youtube.com/watch?v=fJ1nqFzl3bE&list=PLtB7CL7EG7pDKdSBA_AlNYrEsISOHB
 - @todo 对比 rivercarro 看改了哪些内容
 - 看看 river 的其他模块 -> riverctl
 
+- @ques https://www.youtube.com/watch?v=whjDH-LKA2s
+  - `[]const u8` -> runtime 确定大小
+  - `*const [5]u8` -> pointer for array
+  - `[*]const u8` -> pointer for array, 不知道 len
+  - `[:0]const u8` -> 和 c 交互的 array
+
 ### 记忆
 
-### task
+- @qeus @ptrCast
+- @ques std.log.scoped
 
-- @ques vscode shortcut previous edit location
+- @ques `@intCast` `@truncate`
+- @ques mem.splitSequence 将 slice 分割
+- @ques `mem.orderZ`
+
+- @ques `std.AutoHashMapUnmanaged`
+
+### task
 
 - @ques zig array
 
   - std.SinglyLinkedList -> `.prepend` `.first` `.remove`
   - std.TailQueue
-
-- @ques `@intCast`
-
-- @ques std.log.scoped
-
-- @ques `mem.splitSequence` `std.AutoHashMapUnmanaged` `mem.orderZ`
 
 - @ques `main-location-cycle` 之后页面的布局怎么就改变了
 
@@ -52,6 +59,8 @@ https://www.youtube.com/watch?v=fJ1nqFzl3bE&list=PLtB7CL7EG7pDKdSBA_AlNYrEsISOHB
   - 是 ev.serial 吗
 
 ### end
+
+- @ques vscode shortcut previous edit location
 
 - @ques `mem.tokenize(u8, mem.span(ev.command), " ");`
 

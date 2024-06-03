@@ -16,10 +16,10 @@ pub fn main() !void {
     try map.put(allocator, 3, 30);
 
     // Lookup values
-    const value = map.get(1);
-    _ = map.getOrPutValue(allocator, 4, 100) catch |e| {
-        return e;
-    };
+    _ = try map.getOrPutValue(allocator, 4, 100);
+    _ = try map.getOrPut(allocator, 5);
+
+    const value = map.get(5);
     if (value) |v| {
         std.debug.print("Key 1 has value {}\n", .{v});
     } else {
