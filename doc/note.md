@@ -2,7 +2,7 @@ https://zig.guide/language-basics/errors
 
 https://www.youtube.com/watch?v=whjDH-LKA2s
 
-- 实拍越南山城大叻 -> 疗养
+- 疗养
 
 ## 2024-05-27 10:45:32
 
@@ -17,26 +17,35 @@ https://www.youtube.com/watch?v=whjDH-LKA2s
 
 ### 记忆
 
-- @qeus @ptrCast
-- @ques std.log.scoped
-
-- @ques `@intCast` `@truncate`
-- @ques mem.splitSequence 将 slice 分割
-- @ques `mem.orderZ`
-
-- @ques `std.AutoHashMapUnmanaged`
-
-- list
-  - std.SinglyLinkedList -> `.prepend` `.first` `.remove`
-  - std.TailQueue
+- @qeus @alignOf
 
 ### task
 
+- @ques `@memcpy arguments have non-equal lengths`
+- @ques zig string indexOf | 合并字符串?
+
+```zig
+// error: unable to resolve comptime value
+// slice value being concatenated must be comptime-known
+var arr: [][]const u8 = undefined;
+arr = arr ++ .{"ddd"};
+```
+
+- @ques riverctl 就那一点代码 怎么实现功能的
+
 - `const bytes align(@alignOf(u32)) = [_]u8{ 0x12, 0x12, 0x12, 0x12 };`
+
+  - 类型对齐是干嘛的
 
 - @ques `main-location-cycle` 之后页面的布局怎么就改变了
 
   - cfgs 修改之后 又触发了其他的函数运行?
+
+- @ques layout_demand.pushViewDimensions 怎么不需要传 app id 之类的东西
+
+  - pushViewDimensions -> marshal -> wl_proxy_marshal_array
+
+- @ques 也许需要去学习下 wayland 的接口
 
 ### end
 

@@ -17,7 +17,6 @@ rivercarro https://sr.ht/~novakane/rivercarro/
 
 ```
 /usr/share/wayland-sessions/river.desktop
-
 zig build -Doptimize=ReleaseSafe -Dxwayland --prefix ~/.local install
 ```
 
