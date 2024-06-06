@@ -1,5 +1,9 @@
 const std = @import("std");
 
+fn filterStr(str: []const u8) bool {
+    return indexOf(str, "world") == -1;
+}
+
 fn filterArrList1(allocator: std.mem.Allocator, comptime T: type) (fn (list: std.ArrayList([]const T), filter_fn: fn (item: []const T) bool) std.mem.Allocator.Error!std.ArrayList([]const T)) {
     return struct {
         fn run(list: std.ArrayList([]const T), filter_fn: fn (item: []const T) bool) std.mem.Allocator.Error!std.ArrayList([]const T) {
@@ -12,10 +16,6 @@ fn filterArrList1(allocator: std.mem.Allocator, comptime T: type) (fn (list: std
             return result;
         }
     }.run;
-}
-
-fn filterStr(str: []const u8) bool {
-    return indexOf(str, "world") == -1;
 }
 
 pub fn main() !void {

@@ -19,16 +19,38 @@ pub fn main() !void {
     // 打印数组内容
     std.debug.print("test1:>{s}\n", .{res1});
 
-    var filterList = std.ArrayList([]const u8).init(allocator);
+    var filterList1 = std.ArrayList([]const u8).init(allocator);
     // 打印数组内容
     for (arrayList.items) |item| {
         if (indexOf(item, "waha") != -1) {
             continue;
         }
-        try filterList.append(item);
+        try filterList1.append(item);
     }
-    const res2: []u8 = try concatArrayList(allocator, filterList, ", ");
+    const res2: []u8 = try concatArrayList(allocator, filterList1, ", ");
     std.debug.print("test2:>{s}\n", .{res2});
+
+    const filterList2 = try filterArrList1(allocator, u8)(arrayList, filterStr);
+    const res: []u8 = try concatArrayList(allocator, filterList2, ", ");
+    std.debug.print("test3:>{s}\n", .{res});
+}
+
+fn filterStr(str: []const u8) bool {
+    return indexOf(str, "waha") == -1;
+}
+
+fn filterArrList1(allocator: std.mem.Allocator, comptime T: type) (fn (list: std.ArrayList([]const T), filter_fn: fn (item: []const T) bool) std.mem.Allocator.Error!std.ArrayList([]const T)) {
+    return struct {
+        fn run(list: std.ArrayList([]const T), filter_fn: fn (item: []const T) bool) std.mem.Allocator.Error!std.ArrayList([]const T) {
+            var result = std.ArrayList([]const T).init(allocator);
+            for (list.items) |item| {
+                if (filter_fn(item)) {
+                    try result.append(item);
+                }
+            }
+            return result;
+        }
+    }.run;
 }
 
 fn indexOf(s: []const u8, sub: []const u8) i32 {
