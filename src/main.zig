@@ -1,22 +1,17 @@
 const std = @import("std");
 
-fn indexOf(s: []const u8, sub: []const u8) usize {
-    for (s, 0..) |_, i| {
-        if (std.mem.startsWith(u8, s[i..], sub)) {
-            return i;
-        }
-    }
-    return std.math.maxInt(usize);
-}
-
 pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-    const allocator = gpa.allocator();
+    const str1: [*:0]const u8 = "test";
+    std.debug.print("st1:>{s}:{any}\n", .{ str1, @TypeOf(str1) });
 
-    var arr: [][]const u8 = undefined;
-    arr = arr ++ .{"ddd"};
-    const s = try std.mem.concat(allocator, u8, &arr);
-    defer allocator.free(s);
-    std.debug.print("Index: {s}\n", .{s});
+    const str2: []const u8 = std.mem.span(str1);
+    std.debug.print("st2:>{s}:{any}\n", .{ str1, @TypeOf(str2) });
+
+    var str3: [128]u8 = undefined;
+    @memcpy(str3[0..str2.len], str2);
+    str3[str2.len] = 0;
+    std.debug.print("str3:>{s}:{any}\n", .{ str3[0..str2.len], @TypeOf(str3) });
+
+    const str4: [*:0]const u8 = str3[0..str2.len :0];
+    std.debug.print("str4:>{s}:{any}\n", .{ str4, @TypeOf(str4) });
 }

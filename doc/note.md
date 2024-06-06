@@ -19,12 +19,22 @@ https://www.youtube.com/watch?v=whjDH-LKA2s
 
 - @qeus @alignOf
 
+- @ques memory align 是什么?
+
 ### task
 
+- @ques zig usize to i32
+  - @intCast
 - @ques `@memcpy arguments have non-equal lengths`
 - @ques zig string indexOf | 合并字符串?
 
+  - std.mem.concat
+  - 怎么创建一个 `[][]u8`
+
+- @ques comptime return fn
+
 ```zig
+// type '[][]u8' does not support array initialization syntax
 // error: unable to resolve comptime value
 // slice value being concatenated must be comptime-known
 var arr: [][]const u8 = undefined;
