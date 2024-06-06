@@ -9,37 +9,38 @@ https://www.youtube.com/watch?v=whjDH-LKA2s
 - @todo 对比 rivercarro 看改了哪些内容
 - 看看 river 的其他模块 -> riverctl
 
-- @ques https://www.youtube.com/watch?v=whjDH-LKA2s
-  - `[]const u8` -> runtime 确定大小
-  - `*const [5]u8` -> pointer for array
-  - `[*]const u8` -> pointer for array, 不知道 len
-  - `[:0]const u8` -> 和 c 交互的 array
-
 ### 记忆
 
 - @qeus @alignOf
 
 - @ques memory align 是什么?
 
+- @intCast @as @truncate
+
+- @intCast allocator
+
 ### task
 
-- @ques zig usize to i32
-  - @intCast
-- @ques `@memcpy arguments have non-equal lengths`
-- @ques zig string indexOf | 合并字符串?
+```
+pub fn getAutoEqlFn(comptime K: type, comptime Context: type) (fn (Context, K, K) bool) {
+    return struct {
+        fn eql(ctx: Context, a: K, b: K) bool {
+            _ = ctx;
+            return meta.eql(a, b);
+        }
+    }.eql;
+}
+```
 
-  - std.mem.concat
-  - 怎么创建一个 `[][]u8`
+- struct
+
+  - Globals > .control + .seat
+
+- @ques setListener
+
+- @ques 怎么创建一个 `[][]u8`
 
 - @ques comptime return fn
-
-```zig
-// type '[][]u8' does not support array initialization syntax
-// error: unable to resolve comptime value
-// slice value being concatenated must be comptime-known
-var arr: [][]const u8 = undefined;
-arr = arr ++ .{"ddd"};
-```
 
 - @ques riverctl 就那一点代码 怎么实现功能的
 
