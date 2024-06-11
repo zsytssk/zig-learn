@@ -9,15 +9,11 @@ https://www.youtube.com/watch?v=whjDH-LKA2s
 - @todo 对比 rivercarro 看改了哪些内容
 - 看看 river 的其他模块 -> riverctl
 
+- zig 没有匿名函数 没有 interface 写起来比较麻烦
+
 ### 记忆
 
-- @qeus @alignOf
-
-- @ques memory align 是什么?
-
-- @intCast @as @truncate
-
-- @intCast allocator
+- @ques `std.fmt.allocPrint`
 
 ### task
 
