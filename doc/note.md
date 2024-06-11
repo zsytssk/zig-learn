@@ -6,16 +6,28 @@ https://www.youtube.com/watch?v=whjDH-LKA2s
 
 ## 2024-05-27 10:45:32
 
-- @todo 对比 rivercarro 看改了哪些内容
-- 看看 river 的其他模块 -> riverctl
-
-- zig 没有匿名函数 没有 interface 写起来比较麻烦
+- zig main.zig
 
 ### 记忆
 
 - @ques `std.fmt.allocPrint`
+- @ques `mem.len()`
 
 ### task
+
+- `io.getStdOut().writeAll` `io.getStdErr().writeAll`
+- @ques 这 zig 可以和 c 完全交互啊
+- @ques `pub usingnamespace @cImport`
+- @ques `@cInclude`
+- @ques `?*anyopaque`
+- @ques `c.setsid()`
+- @ques `c.setenv`
+- @ques `libevdev_event_code_from_name`
+- @ques `const Server = @This();`
+- @ques `wlroots` `pixman` `xkbcommon` 是什么
+
+- @ques `wlr.version.major`
+  - `wlr.version.major != 0 or wlr.version.minor != 17 or wlr.version.micro < 2`
 
 ```
 pub fn getAutoEqlFn(comptime K: type, comptime Context: type) (fn (Context, K, K) bool) {
@@ -55,6 +67,10 @@ pub fn getAutoEqlFn(comptime K: type, comptime Context: type) (fn (Context, K, K
 - @ques 也许需要去学习下 wayland 的接口
 
 ### end
+
+- zig 没有匿名函数 没有 interface 写起来比较麻烦
+- @todo 对比 rivercarro 看改了哪些内容
+- 看看 river 的其他模块 -> riverctl
 
 - @ques vscode shortcut previous edit location
 

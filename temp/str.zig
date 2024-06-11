@@ -1,20 +1,25 @@
 const std = @import("std");
 
 pub fn main() !void {
-    try test4();
+    try test5();
 }
 
 fn test5() !void {
     const allocator = std.heap.page_allocator;
+    const a = [_][]const u8{ "hello", "wrold", "hhaa" };
 
-    // 向 ArrayList 添加元素
-    const a: []const u8 = "hello";
-    const b: []const u8 = "world";
-    const c: []const u8 = "wahaha";
+    var res: []u8 = "";
+    for (a) |item| {
+        res = std.fmt.allocPrint(allocator, "{s} {s}", .{ res, item }) catch |err| {
+            std.debug.print("{s}:{any}", .{
+                item,
+                err,
+            });
+            return;
+        };
+    }
 
-    const d = try std.fmt.allocPrint(allocator, "{s}-{s}-{s}", .{ a, b, c });
-
-    std.debug.print("{s}", .{d});
+    std.debug.print("{s}", .{res});
 }
 
 fn test4() !void {
