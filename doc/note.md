@@ -10,21 +10,39 @@ https://www.youtube.com/watch?v=whjDH-LKA2s
 
 ### 记忆
 
-- @ques `std.fmt.allocPrint`
 - @ques `mem.len()`
+- @ques null `orelse "test"`
+- `io.getStdOut().writeAll` `io.getStdErr().writeAll`
+- @ques `pub usingnamespace `
+- @ques `@cInclude` `@cImport`
+
+  - `libinput.h` 输入设备
+  - `libevdev/libevdev` -> 虚拟键盘
+    - libevdev_event_code_from_name
+  - `linux/input-event-codes` -> 输入事件
+  - `unistd.h` 系统函数 -> `setsid` `setenv`
+  - `stdlib.h` c 的 std 库
+
+- @ques 这 zig 可以和 c 完全交互啊
+
+  - 需要类型转换
+
+- @ques `?*anyopaque`
+
+  - optional 不透明类型的指针
+  - `layout_v3.setHandler(?*anyopaque, handleRequestInert, null, null)`
+
+- @ques `const Server = @This();` 当前文件当作一个 struct
+
+- @ques `wlroots` `pixman` `xkbcommon` 是什么
+  - wlroots 是 wayland 的接口
+  - pixman 处理图像
+  - xkbcommon 键盘映射
 
 ### task
 
-- `io.getStdOut().writeAll` `io.getStdErr().writeAll`
-- @ques 这 zig 可以和 c 完全交互啊
-- @ques `pub usingnamespace @cImport`
-- @ques `@cInclude`
-- @ques `?*anyopaque`
-- @ques `c.setsid()`
-- @ques `c.setenv`
-- @ques `libevdev_event_code_from_name`
-- @ques `const Server = @This();`
-- @ques `wlroots` `pixman` `xkbcommon` 是什么
+- ***
+- `posix.fork`
 
 - @ques `wlr.version.major`
   - `wlr.version.major != 0 or wlr.version.minor != 17 or wlr.version.micro < 2`

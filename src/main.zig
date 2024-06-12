@@ -1,19 +1,8 @@
 const std = @import("std");
+// const c = @import("./c.zig");
+const point = @import("./point.zig");
 
-pub fn main() !void {
-    const allocator = std.heap.page_allocator;
-    const a = [_][]const u8{ "test", "test2" };
-
-    var res: []u8 = "";
-    for (a) |item| {
-        res = std.fmt.allocPrint(allocator, "{s} {s}", .{ res, item }) catch |err| {
-            std.debug.print("{s}:{any}", .{
-                item,
-                err,
-            });
-            return;
-        };
-    }
-
-    std.debug.print("{s}", .{res});
+pub fn main() anyerror!void {
+    const p = point.new(12, 12);
+    std.debug.print("{any}\n", .{p});
 }

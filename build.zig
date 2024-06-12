@@ -16,7 +16,9 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-    // exe.linkLibC();
+    exe.linkLibC();
+    exe.linkSystemLibrary("libevdev");
+    exe.linkSystemLibrary("libinput");
     // exe.addCSourceFiles(.{ .files = &.{"src/main.c"} });
 
     // Put the binary in zig-out or prefix specified
