@@ -1,8 +1,14 @@
 const std = @import("std");
 // const c = @import("./c.zig");
-const point = @import("./point.zig");
 
 pub fn main() anyerror!void {
-    const p = point.new(12, 12);
-    std.debug.print("{any}\n", .{p});
+    const a = 1;
+    const b = brk: {
+        if (a > 1) {
+            break :brk 10;
+        }
+        break :brk 20;
+    };
+
+    std.debug.print("{?}\n", .{b});
 }

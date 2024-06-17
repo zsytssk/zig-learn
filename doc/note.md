@@ -10,29 +10,7 @@ https://www.youtube.com/watch?v=whjDH-LKA2s
 
 ### 记忆
 
-- @ques `mem.len()`
-- @ques null `orelse "test"`
 - `io.getStdOut().writeAll` `io.getStdErr().writeAll`
-- @ques `pub usingnamespace `
-- @ques `@cInclude` `@cImport`
-
-  - `libinput.h` 输入设备
-  - `libevdev/libevdev` -> 虚拟键盘
-    - libevdev_event_code_from_name
-  - `linux/input-event-codes` -> 输入事件
-  - `unistd.h` 系统函数 -> `setsid` `setenv`
-  - `stdlib.h` c 的 std 库
-
-- @ques 这 zig 可以和 c 完全交互啊
-
-  - 需要类型转换
-
-- @ques `?*anyopaque`
-
-  - optional 不透明类型的指针
-  - `layout_v3.setHandler(?*anyopaque, handleRequestInert, null, null)`
-
-- @ques `const Server = @This();` 当前文件当作一个 struct
 
 - @ques `wlroots` `pixman` `xkbcommon` 是什么
   - wlroots 是 wayland 的接口
@@ -40,6 +18,53 @@ https://www.youtube.com/watch?v=whjDH-LKA2s
   - xkbcommon 键盘映射
 
 ### task
+
+- `meta.stringToEnum(meta.Tag(Config.AttachMode), args[1])`
+- `std.fmt.parseInt(u32, args[2], 10)`
+- command
+
+  - 所有的命令 函数
+
+- @ques 怎么处理快捷键
+
+- @ques 为何 move-view 不会超出屏幕
+
+- @ques borderWidth -> applyPending
+
+- @ques std.StringHashMap
+
+- @ques zig work with lua
+
+```zig
+const layout_index = blk: {
+      if (result.flags.layout) |layout_raw| {
+          break :blk try fmt.parseInt(u32, layout_raw, 10);
+      } else {
+          break :blk null;
+      }
+  };
+```
+
+```zig
+fn parseRgba(string: []const u8) ![4]f32 {
+    if (string.len != 8 and string.len != 10) return error.InvalidRgba;
+    if (string[0] != '0' or string[1] != 'x') return error.InvalidRgba;
+
+    const r = try fmt.parseInt(u8, string[2..4], 16);
+    const g = try fmt.parseInt(u8, string[4..6], 16);
+    const b = try fmt.parseInt(u8, string[6..8], 16);
+    const a = if (string.len == 10) try fmt.parseInt(u8, string[8..10], 16) else 255;
+
+    const alpha = @as(f32, @floatFromInt(a)) / 255.0;
+
+    return [4]f32{
+        @as(f32, @floatFromInt(r)) / 255.0 * alpha,
+        @as(f32, @floatFromInt(g)) / 255.0 * alpha,
+        @as(f32, @floatFromInt(b)) / 255.0 * alpha,
+        alpha,
+    };
+}
+```
 
 - ***
 - `posix.fork`

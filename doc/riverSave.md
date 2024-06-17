@@ -13,6 +13,15 @@ rivercarro https://sr.ht/~novakane/rivercarro/
 
 ## other
 
+- @ques `@cImport` `@cInclude`
+
+  - `libinput.h` 输入设备
+  - `libevdev/libevdev` -> 虚拟键盘
+    - libevdev_event_code_from_name
+  - `linux/input-event-codes` -> 输入事件
+  - `unistd.h` 系统函数 -> `setsid` `setenv`
+  - `stdlib.h` c 的 std 库
+
 - @ques 怎么让系统默认运行我本地的 river
 
 ```
