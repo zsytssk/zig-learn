@@ -1,7 +1,10 @@
 感觉这代码好复杂
 
+https://www.youtube.com/watch?v=e9tkDBieW3A -> Wlroots
+
 ## url
 
+https://way-cooler.org/book/wlroots_introduction.html
 https://codeberg.org/river/river/src/branch/master/protocol/river-layout-v3.xml
 https://codeberg.org/river/wiki
 https://codeberg.org/river/wiki/src/branch/master/pages/Community-Layouts.md
