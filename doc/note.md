@@ -13,29 +13,12 @@ https://www.youtube.com/watch?v=whjDH-LKA2s
 - `io.getStdOut().writeAll` `io.getStdErr().writeAll`
 
 - @ques `wlroots` `pixman` `xkbcommon` 是什么
+
   - wlroots 是 wayland 的接口
   - pixman 处理图像
   - xkbcommon 键盘映射
 
-### task
-
-- @ques 道德
-
-- `meta.stringToEnum(meta.Tag(Config.AttachMode), args[1])`
-- `std.fmt.parseInt(u32, args[2], 10)`
-- command
-
-  - 所有的命令 函数
-
-- @ques 怎么处理快捷键
-
-- @ques 为何 move-view 不会超出屏幕
-
-- @ques borderWidth -> applyPending
-
 - @ques std.StringHashMap
-
-- @ques zig work with lua
 
 ```zig
 const layout_index = blk: {
@@ -46,6 +29,28 @@ const layout_index = blk: {
       }
   };
 ```
+
+### task
+
+- `std.meta.Tag`
+- `meta.stringToEnum(meta.Tag(Config.AttachMode), args[1])`
+- `std.fmt.parseInt(u32, args[2], 10)`
+
+- `std.meta.Tag(Action)` 这个就是泛型
+
+- zig extract optional
+
+- command
+
+  - 所有的命令 函数
+
+- @ques 怎么处理快捷键
+
+- @ques 为何 move-view 不会超出屏幕
+
+- @ques borderWidth -> applyPending
+
+- @ques zig work with lua
 
 ```zig
 fn parseRgba(string: []const u8) ![4]f32 {
@@ -69,21 +74,6 @@ fn parseRgba(string: []const u8) ![4]f32 {
 ```
 
 - ***
-- `posix.fork`
-
-- @ques `wlr.version.major`
-  - `wlr.version.major != 0 or wlr.version.minor != 17 or wlr.version.micro < 2`
-
-```
-pub fn getAutoEqlFn(comptime K: type, comptime Context: type) (fn (Context, K, K) bool) {
-    return struct {
-        fn eql(ctx: Context, a: K, b: K) bool {
-            _ = ctx;
-            return meta.eql(a, b);
-        }
-    }.eql;
-}
-```
 
 - struct
 
