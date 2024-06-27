@@ -1,8 +1,15 @@
 https://zig.guide/language-basics/errors
 
-https://www.youtube.com/watch?v=whjDH-LKA2s
+https://www.youtube.com/watch?v=BkETJWMz0f0
 
 - 疗养
+
+## 2024-06-27 14:40:02
+
+screen -> tag -> client
+
+seat -> input device
+compositor ?
 
 ## 2024-05-27 10:45:32
 
@@ -20,6 +27,8 @@ https://www.youtube.com/watch?v=whjDH-LKA2s
 
 - @ques std.StringHashMap
 
+- `std.meta.Tag(Action)` 这个就是泛型
+
 ```zig
 const layout_index = blk: {
       if (result.flags.layout) |layout_raw| {
@@ -32,11 +41,9 @@ const layout_index = blk: {
 
 ### task
 
-- `std.meta.Tag`
-- `meta.stringToEnum(meta.Tag(Config.AttachMode), args[1])`
-- `std.fmt.parseInt(u32, args[2], 10)`
+- `@bitCast`
 
-- `std.meta.Tag(Action)` 这个就是泛型
+- `std.fmt.parseInt(u32, args[2], 10)`
 
 - zig extract optional
 

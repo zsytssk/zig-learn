@@ -1,36 +1,57 @@
 const std = @import("std");
+const print = std.debug.print;
 
-const Num = union(enum) {
-    Int,
-    Float: void,
-    PI: f64,
-    fn is(self: Num, tag: std.meta.Tag(Num)) bool {
-        return self == tag;
-    }
-    fn isSame(self: *Num, tag: std.meta.Tag(Num)) bool {
-        return self == tag;
-    }
+const protocol = @import("protocol.zig");
+
+const S = packed struct {
+    a: u3 = 0,
+    b: u3 = 0,
+    c: u2 = 0,
 };
 
-pub const Action = union(enum) {
-    move: void,
-    resize: void,
-    command: []const [:0]const u8,
-};
+pub fn main() !void {
+    const s1 = S{};
+    layout(&s1);
 
-// stringToEnum(meta.Tag(Config.AttachMode), args[1])
-pub fn main() anyerror!void {
-    const a: Num = .Int;
-    std.debug.print("{any}\n", .{a});
-    const b = std.meta.stringToEnum(std.meta.Tag(Num), "Int");
-    if (b) |_| {
-        std.debug.print("{any}\n", .{b == a});
+    // // Simple bit cast example.
+    const bits: u8 = 0b11_011_100; // c: 3, b: 3, a: 5
+    const s2: S = @bitCast(bits);
+    print("a: {[a]}, b: {[b]}, c: {[c]}\n", s2);
+    print("\n", .{});
+
+    // // Real-life packed struct / bit cast example.
+    const h_original = protocol.Header{
+        .version = 0,
+        .code = .get,
+        .index = 0,
+        .total = 1,
+    };
+    print("original: {any}\n", .{h_original});
+
+    var buf: [256]u8 = undefined;
+    h_original.write(&buf);
+    print("buf: {any}\n", .{buf});
+
+    const h_received = protocol.Header.read(&buf);
+    print("received: {any}\n", .{h_received});
+}
+
+fn layout(s: *const S) void {
+    // Info about struct type S.
+    print("Type:\t{}\n", .{S});
+    print("\tsize:\t{}\n", .{@sizeOf(S)});
+    print("\talign:\t{}\n", .{@alignOf(S)});
+    print("\n", .{});
+
+    // Info about struct type S fields.
+    const info = @typeInfo(S);
+
+    inline for (info.Struct.fields) |field| {
+        print("Field:\t{s}\n", .{field.name});
+        print("\tsize:\t{}\n", .{@sizeOf(field.type)});
+        print("\toffset:\t{}\n", .{@offsetOf(S, field.name)});
+        print("\talign:\t{}\n", .{field.alignment});
+        print("\taddr:\t{*}\n", .{&@field(s, field.name)});
+        print("\n", .{});
     }
-    std.debug.print("{any}\n", .{b == .Int});
-
-    // switch (a) {
-    //     inline b => std.debug.print("hello", .{}),
-    //     else => std.debug.print("world", .{}),
-    // }
-    // std.debug.print("{}", .{a == std.meta.Tag(Num)});
 }

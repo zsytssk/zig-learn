@@ -2,6 +2,15 @@
 - @ques zig slice 能 push 吗
 - @ques 是干嘛的 [Atomic](https://www.youtube.com/watch?v=grMBeLJw7DM&list=PLtB7CL7EG7pCw7Xy1SQC53Gl8pI7aDg9t&index=44)
 
+## 依赖数据结构
+
+这样就可以处理程序中的内存依赖的问题
+
+- `->` 是依赖的意思
+- a -> b -> c
+  - 如果 a 减 1, b 和 c 自动减一
+  - 如果 c 有一个属性, a 就自动有一个属性; c 去掉那个属性 a 同时也去掉
+
 ## ques
 
 zig 如何让 struct 支持 `==` `!=`
