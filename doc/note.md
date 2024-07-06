@@ -4,6 +4,29 @@ https://www.youtube.com/watch?v=BkETJWMz0f0
 
 - 疗养
 
+## 2024-06-28 11:25:45
+
+- @todo @tagName
+
+```
+mem.endsWith
+river_wlroots_log_callback
+```
+
+怎么简单的启动一个 compositor
+
+```zig
+const wl_server = try wl.Server.create();
+
+var session: ?*wlr.Session = undefined;
+const backend = try wlr.Backend.autocreate(wl_server, &session);
+const renderer = try wlr.Renderer.autocreate(backend);
+
+const compositor = try wlr.Compositor.create(wl_server, 6, renderer);
+
+const loop = wl_server.getEventLoop();
+```
+
 ## 2024-06-27 14:40:02
 
 screen -> tag -> client

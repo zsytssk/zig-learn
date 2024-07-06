@@ -16,8 +16,6 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-    exe.linkLibC();
-    exe.addCSourceFiles(.{ .files = &.{"src/test.c"} });
     // exe.addCSourceFiles(.{ .files = &.{"src/main.c"} });
 
     // Put the binary in zig-out or prefix specified

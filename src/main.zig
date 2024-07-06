@@ -1,57 +1,143 @@
 const std = @import("std");
-const print = std.debug.print;
 
-const protocol = @import("protocol.zig");
+// Simple token type using an enum.
+const Token = enum {
+    lparen,
+    rparen,
+    lbrace,
+    rbrace,
 
-const S = packed struct {
-    a: u3 = 0,
-    b: u3 = 0,
-    c: u2 = 0,
+    kw_var,
+    kw_fn,
+
+    plus,
+    minus,
+    star,
+    slash,
+
+    pub fn format(
+        self: Token,
+        comptime _: []const u8,
+        _: std.fmt.FormatOptions,
+        writer: anytype,
+    ) !void {
+        switch (self) {
+            .plus => try writer.writeByte('+'),
+            .minus => try writer.writeByte('-'),
+            .star => try writer.writeByte('*'),
+            .slash => try writer.writeByte('/'),
+            else => {},
+        }
+    }
 };
 
-pub fn main() !void {
-    const s1 = S{};
-    layout(&s1);
+// Statements can be more complex, so we use a tagged union.
+const Statement = union(enum) {
+    var_decl: VarDecl,
+    print: Expression,
 
-    // // Simple bit cast example.
-    const bits: u8 = 0b11_011_100; // c: 3, b: 3, a: 5
-    const s2: S = @bitCast(bits);
-    print("a: {[a]}, b: {[b]}, c: {[c]}\n", s2);
-    print("\n", .{});
+    pub fn format(
+        self: Statement,
+        comptime _: []const u8,
+        _: std.fmt.FormatOptions,
+        writer: anytype,
+    ) !void {
+        switch (self) {
+            .print => |expr| try writer.print("print {}", .{expr}),
+            inline else => |it| try writer.print("{}", .{it}),
+        }
+    }
+};
 
-    // // Real-life packed struct / bit cast example.
-    const h_original = protocol.Header{
-        .version = 0,
-        .code = .get,
-        .index = 0,
-        .total = 1,
-    };
-    print("original: {any}\n", .{h_original});
+// Tagged union fields can have simple or complex structure.
+const VarDecl = struct {
+    ident: []const u8,
+    value: Expression,
 
-    var buf: [256]u8 = undefined;
-    h_original.write(&buf);
-    print("buf: {any}\n", .{buf});
+    pub fn format(
+        self: VarDecl,
+        comptime _: []const u8,
+        _: std.fmt.FormatOptions,
+        writer: anytype,
+    ) !void {
+        try writer.print("var {s} = {}", .{ self.ident, self.value });
+    }
+};
 
-    const h_received = protocol.Header.read(&buf);
-    print("received: {any}\n", .{h_received});
+// Same goes for expressions.
+const Expression = union(enum) {
+    ident: []const u8,
+    prefix: Prefix,
+    infix: Infix,
+
+    pub fn format(
+        self: Expression,
+        comptime _: []const u8,
+        _: std.fmt.FormatOptions,
+        writer: anytype,
+    ) !void {
+        switch (self) {
+            .ident => |str| try writer.writeAll(str),
+            inline else => |it| try writer.print("{}", .{it}),
+        }
+    }
+};
+
+const Prefix = struct {
+    op: Token,
+    right: *const Expression,
+
+    pub fn format(
+        self: Prefix,
+        comptime _: []const u8,
+        _: std.fmt.FormatOptions,
+        writer: anytype,
+    ) !void {
+        try writer.print("({}{})", .{ self.op, self.right });
+    }
+};
+
+const Infix = struct {
+    left: *const Expression,
+    op: Token,
+    right: *const Expression,
+
+    pub fn format(
+        self: Infix,
+        comptime _: []const u8,
+        _: std.fmt.FormatOptions,
+        writer: anytype,
+    ) !void {
+        try writer.print("({} {} {})", .{
+            self.left,
+            self.op,
+            self.right,
+        });
+    }
+};
+
+fn dbg(stmt: Statement) void {
+    std.debug.print("{}\n", .{stmt});
 }
 
-fn layout(s: *const S) void {
-    // Info about struct type S.
-    print("Type:\t{}\n", .{S});
-    print("\tsize:\t{}\n", .{@sizeOf(S)});
-    print("\talign:\t{}\n", .{@alignOf(S)});
-    print("\n", .{});
+pub fn main() !void {
+    // This would be built by a parser.
+    const x_decl = Statement{ .var_decl = .{
+        .ident = "x",
+        .value = .{ .prefix = .{
+            .op = .minus,
+            .right = &.{ .ident = "y" },
+        } },
+    } };
 
-    // Info about struct type S fields.
-    const info = @typeInfo(S);
+    const x_print = Statement{ .print = .{ .ident = "z" } };
 
-    inline for (info.Struct.fields) |field| {
-        print("Field:\t{s}\n", .{field.name});
-        print("\tsize:\t{}\n", .{@sizeOf(field.type)});
-        print("\toffset:\t{}\n", .{@offsetOf(S, field.name)});
-        print("\talign:\t{}\n", .{field.alignment});
-        print("\taddr:\t{*}\n", .{&@field(s, field.name)});
-        print("\n", .{});
-    }
+    // Now we can debug print our AST nodes.
+    dbg(x_decl);
+    dbg(x_print);
+
+    // Nice for testing the parsed tree.
+    var buf: [256]u8 = undefined;
+    const ast_str = try std.fmt.bufPrint(&buf, "{}", .{x_decl});
+    std.debug.assert(std.mem.eql(u8, "var x = (-y)", ast_str));
 }
