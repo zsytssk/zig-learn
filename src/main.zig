@@ -6,7 +6,7 @@ pub fn main() !void {
     const allocator = gpa.allocator();
 
     var server = try ws.Server(Handler).init(allocator, .{
-        .port = 9224,
+        .port = 8080,
         .address = "127.0.0.1",
         .handshake = .{
             .timeout = 3,
