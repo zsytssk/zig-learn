@@ -1,0 +1,4 @@
+zig-*
+deps/*
+
+.zig-cache
