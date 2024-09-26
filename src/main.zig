@@ -1,67 +1,24 @@
 const std = @import("std");
-const fmt = std.fmt;
-const heap = std.heap;
-const mem = std.mem;
-const print = std.debug.print;
-const time = std.time;
-
-const Trie = @import("trie.zig");
 
 pub fn main() !void {
-    var gpa = heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-    const allocator = gpa.allocator();
+    // Prints to stderr (it's a shortcut based on `std.io.getStdErr()`)
+    std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
 
-    // Alice in Wonderland text embedded as a static
-    // string directly in the binary.
-    const corpus = @embedFile("alice.txt");
+    // stdout is for the actual output of your application, for example if you
+    // are implementing gzip, then only the compressed bytes should be sent to
+    // stdout, not any debugging messages.
+    const stdout_file = std.io.getStdOut().writer();
+    var bw = std.io.bufferedWriter(stdout_file);
+    const stdout = bw.writer();
 
-    print("test:>{any}\n", .{@TypeOf(corpus)});
-    // We split on space, skipping empty fields.
-    var iter = mem.tokenizeScalar(u8, corpus, ' ');
+    try stdout.print("Run `zig build test` to run the tests.\n", .{});
 
-    // Initialize the Trie and ensure its cleanup.
-    var trie = Trie.init(allocator);
-    defer trie.deinit();
+    try bw.flush(); // don't forget to flush!
+}
 
-    // A preliminary test.
-    try trie.insert("caterpillar");
-    try trie.insert("category");
-    try trie.insert("cat");
-    print("caterpillar: {} | ", .{trie.lookup("caterpillar")});
-    print("category: {} | ", .{trie.lookup("category")});
-    print("cat: {}\n\n", .{trie.lookup("cat")});
-
-    // Some counters.
-    var words: usize = 0;
-    var found: usize = 0;
-
-    // Prepare a timer to see how long these ops take.
-    var timer = try std.time.Timer.start();
-
-    // Insertions.
-    while (iter.next()) |word| {
-        try trie.insert(word);
-        words += 1;
-    }
-
-    // Reset the iterator.
-    iter.index = 0;
-
-    // Now lookups.
-    while (iter.next()) |word| {
-        if (trie.lookup(word)) found += 1;
-    }
-
-    // Print summary stats. Note multi-line literal for format.
-    print(
-        \\words:    {}
-        \\found:    {}
-        \\took:     {}
-        \\
-    , .{
-        words,
-        found,
-        fmt.fmtDuration(timer.lap()),
-    });
+test "simple test" {
+    var list = std.ArrayList(i32).init(std.testing.allocator);
+    defer list.deinit(); // try commenting this out and see if zig detects the memory leak!
+    try list.append(42);
+    try std.testing.expectEqual(@as(i32, 42), list.pop());
 }
