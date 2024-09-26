@@ -21,7 +21,7 @@ pub fn build(b: *std.Build) void {
     }).module("websocket");
 
     const exe = b.addExecutable(.{
-        .name = "zig-learn",
+        .name = "transws",
         .root_source_file = b.path("src/main.zig"),
         .target = target,
         .optimize = optimize,

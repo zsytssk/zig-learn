@@ -4,6 +4,14 @@ https://www.youtube.com/watch?v=BkETJWMz0f0
 
 - 疗养
 
+## 2024-09-26 20:16:56
+
+```
+zig build-exe nothing.zig -O ReleaseSmall -fsingle-threaded -fno-unwind-tables
+
+zig build -Doptimize=ReleaseSmall
+```
+
 ## 2024-06-28 11:25:45
 
 - @todo @tagName
