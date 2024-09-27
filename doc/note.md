@@ -6,6 +6,19 @@ https://www.youtube.com/watch?v=BkETJWMz0f0
 
 ## 2024-09-26 20:16:56
 
+- client 列表
+- client 判断不同类型
+- client 检查端口有没有被占用
+- http ws | send
+
+```
+https://github.com/karlseguin/http.zig
+```
+
+```
+稳定投资渠道
+```
+
 ```
 zig build-exe nothing.zig -O ReleaseSmall -fsingle-threaded -fno-unwind-tables
 

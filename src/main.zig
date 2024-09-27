@@ -1,58 +1,50 @@
 const std = @import("std");
-const ws = @import("websocket");
+const httpz = @import("httpz");
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
 
-    var server = try ws.Server(Handler).init(allocator, .{
-        .port = 8080,
-        .address = "127.0.0.1",
-        .handshake = .{
-            .timeout = 3,
-            .max_size = 1024,
-            // since we aren't using hanshake.headers
-            // we can set this to 0 to save a few bytes.
-            .max_headers = 0,
-        },
-    });
+    var server = try httpz.Server().init(allocator, .{ .port = 5882 });
 
-    // Arbitrary (application-specific) data to pass into each handler
-    // Pass void ({}) into listen if you have none
-    var app = App{};
+    // overwrite the default notFound handler
+    server.notFound(notFound);
 
-    // this blocks
-    try server.listen(&app);
+    // overwrite the default error handler
+    server.errorHandler(errorHandler);
+
+    var router = server.router(.{});
+
+    // use get/post/put/head/patch/options/delete
+    // you can also use "all" to attach to all methods
+    router.get("/api/user/:id", getUser, .{});
+
+    // start the server in the current thread, blocking.
+    try server.listen();
 }
 
-// This is your application-specific wrapper around a websocket connection
-const Handler = struct {
-    app: *App,
-    conn: *ws.Conn,
+fn getUser(req: *httpz.Request, res: *httpz.Response) !void {
+    // status code 200 is implicit.
 
-    // You must define a public init function which takes
-    pub fn init(h: ws.Handshake, conn: *ws.Conn, app: *App) !Handler {
-        // `h` contains the initial websocket "handshake" request
-        // It can be used to apply application-specific logic to verify / allow
-        // the connection (e.g. valid url, query string parameters, or headers)
+    // The json helper will automatically set the res.content_type = httpz.ContentType.JSON;
+    // Here we're passing an inferred anonymous structure, but you can pass anytype
+    // (so long as it can be serialized using std.json.stringify)
 
-        _ = h; // we're not using this in our simple case
+    try res.json(.{ .id = req.param("id").?, .name = "Teg" }, .{});
+}
 
-        return .{
-            .app = app,
-            .conn = conn,
-        };
-    }
+fn notFound(_: *httpz.Request, res: *httpz.Response) !void {
+    res.status = 404;
 
-    // You must defined a public clientMessage method
-    pub fn clientMessage(self: *Handler, data: []const u8) !void {
-        try self.conn.write(data); // echo the message back
-    }
-};
+    // you can set the body directly to a []u8, but note that the memory
+    // must be valid beyond your handler. Use the res.arena if you need to allocate
+    // memory for the body.
+    res.body = "Not Found";
+}
 
-// This is application-specific you want passed into your Handler's
-// init function.
-const App = struct {
-    // maybe a db pool
-    // maybe a list of rooms
-};
+// note that the error handler return `void` and not `!void`
+fn errorHandler(req: *httpz.Request, res: *httpz.Response, err: anyerror) void {
+    res.status = 500;
+    res.body = "Internal Server Error";
+    std.log.warn("httpz: unhandled exception for request: {s}\nErr: {}", .{ req.url.raw, err });
+}
