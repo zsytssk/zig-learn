@@ -15,10 +15,10 @@ pub fn build(b: *std.Build) void {
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
-    const websocket = b.dependency("websocket", .{
+    const httpz = b.dependency("httpz", .{
         .target = target,
         .optimize = optimize,
-    }).module("websocket");
+    }).module("httpz");
 
     const exe = b.addExecutable(.{
         .name = "transws",
@@ -27,7 +27,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    exe.root_module.addImport("websocket", websocket);
+    exe.root_module.addImport("httpz", httpz);
 
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default

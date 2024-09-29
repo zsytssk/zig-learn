@@ -1,8 +1,7 @@
 https://zig.guide/language-basics/errors
-
 https://www.youtube.com/watch?v=BkETJWMz0f0
 
-- 疗养
+- @ques 能不能自己实现一个 zig http websocket 库
 
 ## 2024-09-26 20:16:56
 
@@ -10,6 +9,11 @@ https://www.youtube.com/watch?v=BkETJWMz0f0
 - client 判断不同类型
 - client 检查端口有没有被占用
 - http ws | send
+
+```
+curl -X POST -d "msg=trans" 127.0.0.1:9091/send
+curl -X POST -H "Content-Type: application/json" -d '{"msg":"trans"}' 127.0.0.1:9091/send
+```
 
 ```
 https://github.com/karlseguin/http.zig

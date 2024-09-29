@@ -27,7 +27,7 @@
             .path = "./deps/websocket.zig",
         },
         .httpz = .{
-            .path = "./deps/httpz.zig",
+            .path = "./deps/http.zig",
         },
         // See `zig fetch --save <url>` for a command-line interface for adding dependencies.
         //.example = .{
