@@ -1,41 +1,37 @@
-https://zig.guide/language-basics/errors
-https://www.youtube.com/watch?v=BkETJWMz0f0
+https://github.com/karlseguin/http.zig
 
 - @ques 能不能自己实现一个 zig http websocket 库
 
 ## 2024-09-29 18:25:05
 
-实在不行可以用 zig 包一个 c 库
-
-## 2024-09-26 20:16:56
-
 - client 列表
 - client 判断不同类型
-- client 检查端口有没有被占用
-- http ws | send
 
 ```
 curl -X POST -d "msg=trans" 127.0.0.1:9091/send
-curl -X POST -H "Content-Type: application/json" -d '{"msg":"trans"}' 127.0.0.1:9091/send
-
 zig build -Doptimize=ReleaseSmall
+
+file:///home/zsy/Documents/zsytssk/github/zig-learn/test.html
 ```
 
 ```
 https://github.com/karlseguin/http.zig
-
 https://github.com/oven-sh/bun/tree/main/src/http
 ```
 
 ```
-稳定投资渠道
-```
-
-```
-zig build-exe nothing.zig -O ReleaseSmall -fsingle-threaded -fno-unwind-tables
+zig build-exe src/main.zig -O ReleaseSmall -fsingle-threaded -fno-unwind-tables
 
 zig build -Doptimize=ReleaseSmall
+
+zig build-exe nothing.zig -O ReleaseSmall -fsingle-threaded -fno-unwind-tables
 ```
+
+### end
+
+- http ws | send
+
+- client 检查端口有没有被占用 -> zig 一个端口可以被多个进程占用
 
 ## 2024-06-28 11:25:45
 

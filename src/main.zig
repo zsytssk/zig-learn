@@ -1,17 +1,31 @@
 const std = @import("std");
 const httpz = @import("httpz");
 const websocket = httpz.websocket;
+const net = std.net;
 
 pub fn main() !void {
+    const port = 9091;
+
+    checkPortAvailable(port) catch |err| {
+        std.debug.print("checked port={} error={}\n", .{ port, err });
+        return;
+    };
+
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
-
     var handler = Handler{};
-    var server = try httpz.Server(*Handler).init(allocator, .{ .port = 9091, .request = .{ .max_form_count = 10 } }, &handler);
+    var server = try httpz.Server(*Handler).init(allocator, .{ .port = port, .request = .{ .max_form_count = 10 } }, &handler);
+
     var router = server.router(.{});
     router.post("/send", send, .{});
     router.get("/ws", ws, .{});
     try server.listen();
+}
+
+fn checkPortAvailable(port: u16) !void {
+    const address = try net.Address.parseIp4("127.0.0.1", port);
+    var server = try address.listen(.{});
+    defer server.deinit();
 }
 
 const Handler = struct {
@@ -41,6 +55,8 @@ const Handler = struct {
 // curl -X POST -d "msg=youtube|ddd|ddd|124" "127.0.0.1:9091/send"
 fn send(_: *Handler, req: *httpz.Request, res: *httpz.Response) !void {
     const data = try req.formData();
+    std.debug.print("send", .{});
+
     try res.json(.{
         .msg = data.get("msg"),
     }, .{});
