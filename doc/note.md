@@ -3,6 +3,10 @@ https://www.youtube.com/watch?v=BkETJWMz0f0
 
 - @ques 能不能自己实现一个 zig http websocket 库
 
+## 2024-09-29 18:25:05
+
+实在不行可以用 zig 包一个 c 库
+
 ## 2024-09-26 20:16:56
 
 - client 列表
@@ -13,10 +17,14 @@ https://www.youtube.com/watch?v=BkETJWMz0f0
 ```
 curl -X POST -d "msg=trans" 127.0.0.1:9091/send
 curl -X POST -H "Content-Type: application/json" -d '{"msg":"trans"}' 127.0.0.1:9091/send
+
+zig build -Doptimize=ReleaseSmall
 ```
 
 ```
 https://github.com/karlseguin/http.zig
+
+https://github.com/oven-sh/bun/tree/main/src/http
 ```
 
 ```
