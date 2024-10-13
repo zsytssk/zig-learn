@@ -7,33 +7,38 @@
   <body>
     <input type="text" id="messageInput" />
     <button onclick="sendMessage()">发送</button>
+    <button onclick="connectSocket()">connect</button>
+    <button onclick="closeSocket()">close</button>
     <script>
-      const socket = new WebSocket("http://localhost:9091/ws");
+      let socket;
 
-      socket.onopen = function (event) {
-        console.log("WebSocket 连接已建立。");
-      };
+      function connectSocket() {
+        socket = new WebSocket("http://localhost:9091/ws");
+        socket.onopen = function (event) {
+          console.log("WebSocket 连接已建立。");
+        };
 
-      socket.onmessage = function (event) {
-        console.log("接收到消息：", event.data);
-      };
+        socket.onmessage = function (event) {
+          console.log("接收到消息：", event.data);
+        };
 
-      socket.onclose = function (event) {
-        if (event.wasClean) {
-          console.log(
-            "连接已关闭，状态码：",
-            event.code,
-            "原因：",
-            event.reason
-          );
-        } else {
-          console.log("连接意外关闭");
-        }
-      };
+        socket.onclose = function (event) {
+          if (event.wasClean) {
+            console.log(
+              "连接已关闭，状态码：",
+              event.code,
+              "原因：",
+              event.reason
+            );
+          } else {
+            console.log("连接意外关闭");
+          }
+        };
 
-      socket.onerror = function (error) {
-        console.log("发生错误：", error);
-      };
+        socket.onerror = function (error) {
+          console.log("发生错误：", error);
+        };
+      }
 
       function sendMessage() {
         const messageInput = document.getElementById("messageInput");
@@ -42,6 +47,9 @@
           socket.send(message);
           messageInput.value = "";
         }
+      }
+      function closeSocket() {
+        socket.close(1000, "Closing connection");
       }
     </script>
   </body>

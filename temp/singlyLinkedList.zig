@@ -10,7 +10,14 @@ pub fn main() !void {
     };
 
     const node = try allocator.create(std.SinglyLinkedList(u8).Node);
+    node.data = 10;
     errdefer allocator.destroy(node);
     list.prepend(node);
+
+    var nd = list.first;
+    while (nd) |n| {
+        std.debug.print("{d}\n", .{n.data});
+        nd = n.next;
+    }
     std.debug.print("{d}\n", .{list.len()});
 }
