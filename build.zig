@@ -20,6 +20,11 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     }).module("httpz");
 
+    const websocket = b.dependency("websocket", .{
+        .target = target,
+        .optimize = optimize,
+    }).module("websocket");
+
     const exe = b.addExecutable(.{
         .name = "transws",
         .root_source_file = b.path("src/main.zig"),
@@ -28,6 +33,7 @@ pub fn build(b: *std.Build) void {
     });
 
     exe.root_module.addImport("httpz", httpz);
+    exe.root_module.addImport("websocket", websocket);
 
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default

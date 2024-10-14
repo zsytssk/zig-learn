@@ -13,13 +13,24 @@ pub fn main() !void {
 
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
-    var app = App{ .clients = std.SinglyLinkedList(App.WebsocketHandler){}, .upgrade_res_list = std.SinglyLinkedList(*httpz.HTTPConn){}, .allocator = allocator };
+    var app = App{ .clients = std.SinglyLinkedList(App.WebsocketHandler){}, .allocator = allocator };
     var server = try httpz.Server(*App).init(allocator, .{ .port = port, .request = .{ .max_form_count = 10 } }, &app);
-
-    errdefer {
+    defer {
         server.stop();
         server.deinit();
-        app.deinit();
+    }
+
+    defer {
+        var clients = app.clients;
+        var client_op = clients.first;
+        while (client_op) |client| {
+            client.data.conn.closeSocket();
+            clients.remove(client);
+            client_op = client.next;
+            client.data.conn.close(.{}) catch {
+                continue;
+            };
+        }
     }
 
     var router = server.router(.{});
@@ -38,34 +49,12 @@ const AllocationError = error{OutOfMemory};
 const App = struct {
     allocator: std.mem.Allocator,
     clients: std.SinglyLinkedList(WebsocketHandler),
-    upgrade_res_list: std.SinglyLinkedList(*httpz.HTTPConn),
-
     pub fn broadcast(self: *App, msg: []const u8) !void {
         const clients = self.clients;
         var client_op = clients.first;
         while (client_op) |client| {
             try client.data.clientMessage(msg);
             client_op = client.next;
-        }
-    }
-    pub fn bind_upgrade_res(self: *App, res: *httpz.Response) !void {
-        const http_conn = res.conn;
-        const node = try self.allocator.create(std.SinglyLinkedList(*httpz.HTTPConn).Node);
-        node.data = http_conn;
-        self.upgrade_res_list.prepend(node);
-    }
-    pub fn deinit(self: *App) void {
-        var allocator = self.allocator;
-        const list = self.upgrade_res_list;
-        var node_op = list.first;
-        while (node_op) |node| {
-            const http_conn = node.data;
-            const ws_worker: *websocket.server.Worker(WebsocketHandler) = @ptrCast(@alignCast(http_conn.ws_worker));
-            const hc: *websocket.server.HandlerConn(WebsocketHandler) = @ptrCast(@alignCast(http_conn.handover.websocket));
-            ws_worker.cleanupConn(hc);
-            self.upgrade_res_list.remove(node);
-            allocator.destroy(node);
-            node_op = node.next;
         }
     }
     // App-specific data you want to pass when initializing
@@ -103,6 +92,7 @@ const App = struct {
             // var allocator = self.context.?.app.allocator;
             var clients = &self.context.?.app.clients;
             var client_op = clients.first;
+
             std.debug.print("client closed:>0 {}\n", .{clients.len()});
             while (client_op) |client| {
                 if (std.meta.eql(client.data, self.*)) {
@@ -131,7 +121,6 @@ fn ws(app: *App, req: *httpz.Request, res: *httpz.Response) !void {
     if (try httpz.upgradeWebsocket(App.WebsocketHandler, req, res, App.WebsocketContext{ .app = app }) == false) {
         res.status = 400;
         res.body = "invalid websocket handshake";
-        try app.bind_upgrade_res(res);
         return;
     }
 }
