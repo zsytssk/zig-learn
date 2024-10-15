@@ -2,8 +2,12 @@ const std = @import("std");
 const httpz = @import("httpz");
 const websocket = httpz.websocket;
 const net = std.net;
+const os = std.os;
 
+var appTop: ?App = null;
+var serverTop: ?httpz.Server(*App) = null;
 pub fn main() !void {
+    // const port = 60829;
     const port = 9091;
 
     checkPortAvailable(port) catch |err| {
@@ -13,19 +17,34 @@ pub fn main() !void {
 
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
-    var app = App{ .clients = std.SinglyLinkedList(App.WebsocketHandler){}, .upgrade_res_list = std.SinglyLinkedList(*httpz.HTTPConn){}, .allocator = allocator };
-    var server = try httpz.Server(*App).init(allocator, .{ .port = port, .request = .{ .max_form_count = 10 } }, &app);
+    appTop = App{ .clients = std.SinglyLinkedList(App.WebsocketHandler){}, .upgrade_res_list = std.SinglyLinkedList(*httpz.HTTPConn){}, .allocator = allocator };
+    serverTop = try httpz.Server(*App).init(allocator, .{ .port = port, .request = .{ .max_form_count = 10 } }, &appTop.?);
 
     defer {
-        server.stop();
-        server.deinit();
-        app.deinit();
+        appTop.?.deinit();
+        serverTop.?.stop();
+        serverTop.?.deinit();
     }
 
-    var router = server.router(.{});
+    const act = os.linux.Sigaction{
+        .handler = .{ .handler = sigintHandler },
+        .mask = os.linux.empty_sigset,
+        .flags = 0,
+    };
+
+    if (os.linux.sigaction(os.linux.SIG.INT, &act, null) != 0) {
+        return error.SignalHandlerError;
+    }
+
+    var router = serverTop.?.router(.{});
     router.post("/send", send, .{});
     router.get("/ws", ws, .{});
-    try server.listen();
+    std.debug.print("WebsocketHandler end\n", .{});
+    try serverTop.?.listen();
+}
+
+fn sigintHandler(_: c_int) callconv(.C) void {
+    std.debug.print("SIGINT received\n", .{});
 }
 
 fn checkPortAvailable(port: u16) !void {
@@ -34,6 +53,7 @@ fn checkPortAvailable(port: u16) !void {
     defer server.deinit();
 }
 const AllocationError = error{OutOfMemory};
+var TempMsg: []const u8 = "";
 
 const App = struct {
     allocator: std.mem.Allocator,
@@ -93,7 +113,9 @@ const App = struct {
 
             return handler;
         }
-
+        pub fn afterInit(self: *WebsocketHandler) !void {
+            try self.conn.write(TempMsg);
+        }
         // echo back
         pub fn clientMessage(self: *WebsocketHandler, data: []const u8) !void {
             try self.conn.write(data);
@@ -123,7 +145,7 @@ const App = struct {
 fn send(app: *App, req: *httpz.Request, _: *httpz.Response) !void {
     const data = try req.formData();
     std.debug.print("send {s}\n", .{data.get("msg").?});
-
+    TempMsg = data.get("msg").?;
     try app.broadcast(data.get("msg").?);
 }
 
