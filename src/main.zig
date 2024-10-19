@@ -6,8 +6,8 @@ const net = std.net;
 const os = std.os;
 
 pub fn main() !void {
-    const port = 60829;
-    // const port = 9091;
+    // const port = 60829;
+    const port = 9091;
 
     checkPortAvailable(port) catch |err| {
         std.debug.print("checked port={} error={}\n", .{ port, err });
@@ -36,7 +36,7 @@ fn checkPortAvailable(port: u16) !void {
     defer server.deinit();
 }
 
-var TempMsg: [300]u8 = undefined;
+var TempMsg = utils.MsgStr(300).init();
 
 const App = struct {
     allocator: std.mem.Allocator,
@@ -78,7 +78,7 @@ const App = struct {
 
         pub fn clientMessage(self: *WebsocketHandler, data: []const u8) !void {
             if (utils.eql(u8, data, "getInit")) {
-                try self.conn.write(&TempMsg);
+                try self.conn.write(TempMsg.get());
             } else {
                 try self.conn.write(data);
             }
@@ -105,8 +105,7 @@ const App = struct {
 fn send(app: *App, req: *httpz.Request, _: *httpz.Response) !void {
     const data = try req.formData();
     const msg = data.get("msg").?;
-    @memset(TempMsg[0..], 0);
-    @memcpy(TempMsg[0..msg.len], msg);
+    TempMsg.set(msg);
     try app.broadcast(msg);
 }
 

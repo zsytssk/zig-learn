@@ -13,8 +13,8 @@
       let socket;
 
       function connectSocket() {
-        // socket = new WebSocket("http://localhost:9091/ws");
-        socket = new WebSocket("http://127.0.0.1:60829/ws");
+        socket = new WebSocket("http://localhost:9091/ws");
+        // socket = new WebSocket("http://127.0.0.1:60829/ws");
         socket.onopen = function (event) {
           console.log("WebSocket 连接已建立。");
         };
