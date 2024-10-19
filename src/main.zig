@@ -1,12 +1,13 @@
 const std = @import("std");
 const httpz = @import("httpz");
+const utils = @import("utils.zig");
 const websocket = httpz.websocket;
 const net = std.net;
 const os = std.os;
 
 pub fn main() !void {
-    // const port = 60829;
-    const port = 9091;
+    const port = 60829;
+    // const port = 9091;
 
     checkPortAvailable(port) catch |err| {
         std.debug.print("checked port={} error={}\n", .{ port, err });
@@ -26,7 +27,6 @@ pub fn main() !void {
     var router = server.router(.{});
     router.post("/send", send, .{});
     router.get("/ws", ws, .{});
-    std.debug.print("WebsocketHandler end\n", .{});
     try server.listen();
 }
 
@@ -36,8 +36,7 @@ fn checkPortAvailable(port: u16) !void {
     defer server.deinit();
 }
 
-const AllocationError = error{OutOfMemory};
-var TempMsg: []const u8 = "";
+var TempMsg: [300]u8 = undefined;
 
 const App = struct {
     allocator: std.mem.Allocator,
@@ -47,7 +46,7 @@ const App = struct {
         const clients = self.clients;
         var client_op = clients.first;
         while (client_op) |client| {
-            try client.data.clientMessage(msg);
+            try client.data.sendMessage(msg);
             client_op = client.next;
         }
     }
@@ -69,17 +68,20 @@ const App = struct {
             const node = try context.app.allocator.create(std.SinglyLinkedList(WebsocketHandler).Node);
             node.data = handler;
 
-            std.debug.print("client init:> \n", .{});
             context.app.clients.prepend(node);
-
             return handler;
         }
-        pub fn afterInit(self: *WebsocketHandler) !void {
-            try self.conn.write(TempMsg);
-        }
-        // echo back
-        pub fn clientMessage(self: *WebsocketHandler, data: []const u8) !void {
+
+        pub fn sendMessage(self: *WebsocketHandler, data: []const u8) !void {
             try self.conn.write(data);
+        }
+
+        pub fn clientMessage(self: *WebsocketHandler, data: []const u8) !void {
+            if (utils.eql(u8, data, "getInit")) {
+                try self.conn.write(&TempMsg);
+            } else {
+                try self.conn.write(data);
+            }
         }
 
         pub fn close(self: *WebsocketHandler) void {
@@ -88,7 +90,6 @@ const App = struct {
             var client_op = clients.first;
             while (client_op) |client| {
                 if (std.meta.eql(client.data, self.*)) {
-                    std.debug.print("client closed:>1 \n", .{});
                     clients.remove(client);
                     self.context = null;
                     break;
@@ -103,8 +104,9 @@ const App = struct {
 // curl -X POST -d "msg=youtube|ddd|ddd|124" "127.0.0.1:9091/send"
 fn send(app: *App, req: *httpz.Request, _: *httpz.Response) !void {
     const data = try req.formData();
-    TempMsg = data.get("msg").?;
-    try app.broadcast(data.get("msg").?);
+    const msg = data.get("msg").?;
+    @memcpy(TempMsg[0..msg.len], msg);
+    try app.broadcast(msg);
 }
 
 fn ws(app: *App, req: *httpz.Request, res: *httpz.Response) !void {
