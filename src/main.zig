@@ -105,6 +105,7 @@ const App = struct {
 fn send(app: *App, req: *httpz.Request, _: *httpz.Response) !void {
     const data = try req.formData();
     const msg = data.get("msg").?;
+    @memset(TempMsg[0..], 0);
     @memcpy(TempMsg[0..msg.len], msg);
     try app.broadcast(msg);
 }
